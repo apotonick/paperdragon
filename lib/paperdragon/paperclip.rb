@@ -6,13 +6,14 @@ module Paperdragon
     class Uid
       # "/system/:class/:attachment/:id_partition/:style/:filename"
       def initialize(options)
-        @class_name  = options[:class]
+        @class_name  = options[:class_name]
         @attachment  = options[:attachment]
         @id          = options[:id]
         @style       = options[:style]
         @updated_at  = options[:updated_at]
         @file_name   = options[:file_name]
         @hash_secret = options[:hash_secret]
+        @fingerprint = options[:fingerprint] # not used in default.
       end
 
       def call
@@ -22,7 +23,7 @@ module Paperdragon
       end
 
     private
-      attr_reader :class_name, :attachment, :id, :style, :file_name, :hash_secret, :updated_at
+      attr_reader :class_name, :attachment, :id, :style, :file_name, :hash_secret, :updated_at, :fingerprint
 
       def root
         "system"
@@ -51,6 +52,7 @@ module Paperdragon
         # cover_girls/images/4841/thumb/1402617353
         def self.call(secret, class_name, attachment, id, style, updated_at)
           data = "#{class_name}/#{attachment}/#{id}/#{style}/#{updated_at}"
+          # puts "[Paperdragon] HashKey <--------------------- #{data}"
           OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, secret, data)
         end
       end

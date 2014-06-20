@@ -17,3 +17,14 @@ Paperclip uses several columns to compute the UID. Once this is done, it doesn't
 Paperdragon simply dumps the image uid along with meta data into image_meta_data.
 
 You have to take care of updating image_fingerprint etc yourself when changing stuff and still using paperclip to compute urls.
+
+
+Original paperclip UID:
+it { pic.image(:original).should == "/system/test/pics/images/002/216/376/bc7b26d983db8ced792e38f0c34aba417f75c2e7_key/original-c5b7e624adc5b67e13435baf26e65bc8-1399980114/DSC_4876.jpg" }
+
+1) Uid
+     Failure/Error: should == "system/test/pics/images/002/216/376/bc7b26d983db8ced792e38f0c34aba417f75c2e7_key/original-c5b7e624adc5b67e13435baf26e65bc8-1399980114/DSC_4876.jpg" }
+       expected: "system/test/pics/images/002/216/376/bc7b26d983db8ced792e38f0c34aba417f75c2e7_key/original-c5b7e624adc5b67e13435baf26e65bc8-1399980114/DSC_4876.jpg"
+            got: "system/test/pics/images/002/216/376/bc7b26d983db8ced792e38f0c34aba417f75c2e7_key/original/DSC_4876.jpg" (using ==)
+
+Feel like a hacker reverse-engineering

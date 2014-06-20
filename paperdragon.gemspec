@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Paperdragon::VERSION
   spec.authors       = ["Nick Sutterer"]
   spec.email         = ["apotonick@gmail.com"]
-  spec.summary       = %q{Simple but explicit dragonfly attachments.}
-  spec.description   = %q{Simple but explicit dragonfly attachments.}
+  spec.summary       = %q{Explicit image processing based on Dragonfly with Paperclip compatibility.}
+  spec.description   = %q{Explicit image processing based on Dragonfly with Paperclip compatibility.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
