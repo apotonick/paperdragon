@@ -12,6 +12,9 @@ Add this line to your application's Gemfile:
 
 Paperclip Compatibility
 
+1. Stores file to same location as paperclip would do.
+2. `Photo#url` will return the same URL as paperclip.
+
 Paperclip uses several columns to compute the UID. Once this is done, it doesn't store that UID in the database but updates the respective fields, which makes it a bit awkward to maintain.
 
 Paperdragon simply dumps the image uid along with meta data into image_meta_data.

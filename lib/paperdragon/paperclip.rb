@@ -3,6 +3,7 @@ module Paperdragon
 
     # Compute a UID to be compatible with paperclip. This class is meant to be subclassed so you can write
     # your specific file path.
+    # Immutable
     class Uid
       # "/system/:class/:attachment/:id_partition/:style/:filename"
       def initialize(options)
@@ -20,6 +21,12 @@ module Paperdragon
         # default:
         # system/:class/:attachment/:id_partition/:style/:filename
         "#{root}/#{class_name}/#{attachment}/#{id_partition}/#{hash}/#{style}/#{file_name}"
+      end
+
+      def dup(options={})
+        super().tap do |uid|
+          options.each { |k,v| uid.instance_variable_set(:"@#{k}", v) }
+        end
       end
 
     private
