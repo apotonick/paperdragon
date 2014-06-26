@@ -60,6 +60,9 @@ class PaperclipModelTest < MiniTest::Spec
     processable :image, Photo
   end
 
+  # old paperclip style
   it { Avatar.new.image.url(:thumb).must_equal "PaperclipModelTest::Avatar-thumb" }
 
+  # paperdragon style
+  it { Avatar.new.image(:thumb).url.must_equal "PaperclipModelTest::Avatar-thumb" }
 end
