@@ -45,10 +45,6 @@ end
 
 class PaperclipModelTest < MiniTest::Spec
   class Avatar
-    include Paperdragon::Paperclip::Model
-
-    # TODO: allow setting name(s)
-
     class Photo # TODO: replace with Paperdragon::File
       def initialize(model, style)
         @uid = "#{model.class}-#{style}"
@@ -58,6 +54,10 @@ class PaperclipModelTest < MiniTest::Spec
         @uid
       end
     end
+
+
+    include Paperdragon::Paperclip::Model
+    processable :image, Photo
   end
 
   it { Avatar.new.image.url(:thumb).must_equal "PaperclipModelTest::Avatar-thumb" }

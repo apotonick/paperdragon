@@ -9,11 +9,15 @@ Add this line to your application's Gemfile:
     gem 'paperdragon'
 
 
+* you control processing and storage, e.g. first thumbnails and cropping, then process the rest. easy to sidekiq.
+
+
 
 Paperclip Compatibility
 
 1. Stores file to same location as paperclip would do.
 2. `Photo#url` will return the same URL as paperclip.
+3. P::Model image.url(:thumb) still works, your rendering code will still work.
 
 Paperclip uses several columns to compute the UID. Once this is done, it doesn't store that UID in the database but updates the respective fields, which makes it a bit awkward to maintain.
 
