@@ -41,3 +41,25 @@ class PaperclipUidTest < MiniTest::Spec
   it { UidWithFingerprint.from(options.merge(:fingerprint => 8675309)).call.
     must_equal "system/avatars/image/000/001/234/9bf15e5874b3234c133f7500e6d615747f709e64/original/8675309-kristylee.jpg" }
 end
+
+
+class PaperclipModelTest < MiniTest::Spec
+  class Avatar
+    include Paperdragon::Paperclip::Model
+
+    # TODO: allow setting name(s)
+
+    class Photo # TODO: replace with Paperdragon::File
+      def initialize(model, style)
+        @uid = "#{model.class}-#{style}"
+      end
+
+      def url
+        @uid
+      end
+    end
+  end
+
+  it { Avatar.new.image.url(:thumb).must_equal "PaperclipModelTest::Avatar-thumb" }
+
+end

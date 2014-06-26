@@ -78,3 +78,5 @@ module Paperdragon
     end
   end
 end
+
+require 'paperdragon/paperclip/model'
