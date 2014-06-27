@@ -19,14 +19,15 @@ class PaperdragonFileTest < MiniTest::Spec
   # process! saves file
   # TODO: remote storage, server root, etc.
   # todo: test block.
-  let (:uid) { Dragonfly.app.datastore.send(:relative_path_for, "aptomo.png") }
+  let (:uid) { generate_uid }
 
 
   describe "#process!" do
     it do
       file = Paperdragon::File.new(uid, logo)
-      file.process!
+      job = file.process!
 
+      job.must_be_kind_of Dragonfly::Job
       exists?(uid).must_equal true
     end
   end
@@ -38,13 +39,38 @@ class PaperdragonFileTest < MiniTest::Spec
       file.process!
       exists?(uid).must_equal true
 
-      file.delete!
+      job = Paperdragon::File.new(uid).delete!
+
+      job.must_equal nil
       exists?(uid).must_equal false
+    end
+  end
+
+
+  describe "#reprocess!" do
+    # existing:
+    let (:original) { Paperdragon::File.new(uid, logo) }
+
+    before do
+      original.process!
+      exists?(uid).must_equal true
+    end
+
+    it do
+      job = Paperdragon::File.new(uid).reprocess!(original, new_uid = generate_uid)
+
+      job.must_be_kind_of Dragonfly::Job
+      exists?(uid).must_equal false # deleted
+      exists?(new_uid).must_equal true
     end
   end
 
 
   def exists?(uid)
     File.exists?("public/paperdragon/" + uid)
+  end
+
+  def generate_uid
+    Dragonfly.app.datastore.send(:relative_path_for, "aptomo.png")
   end
 end

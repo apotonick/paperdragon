@@ -24,25 +24,31 @@ module Paperdragon
     require 'paperdragon/file/operations'
     include Process
     include Delete
+    include Reprocess
 
 
   private
+    # replaces the UID.
+    def uid!(new_uid)
+      @uid = Uid.new(new_uid)
+    end
+
     attr_reader :style # we need that in #meta_data_for.
 
-    def uid_for(model, class_name, style)
-      Uid.from(
-        id: model.id,
-        file_name: model.image_file_name, # TODO: retrieve from somewhere else.
-        updated_at: model.image_updated_at.to_i, # TODO: retrieve from somewhere else.
-        fingerprint: model.image_fingerprint, # TODO: retrieve from somewhere else.
-        style: style,
-        class_name: class_name,
-        attachment: :images)
-    end
+    # def uid_for(model, class_name, style)
+    #   Uid.from(
+    #     id: model.id,
+    #     file_name: model.image_file_name, # TODO: retrieve from somewhere else.
+    #     updated_at: model.image_updated_at.to_i, # TODO: retrieve from somewhere else.
+    #     fingerprint: model.image_fingerprint, # TODO: retrieve from somewhere else.
+    #     style: style,
+    #     class_name: class_name,
+    #     attachment: :images)
+    # end
 
-    def meta_data_for(job)
-      {style => {:width => job.width, :height => job.height, :uid => uid, :content_type => job.mime_type, :size => job.size}}
-    end
+    # def meta_data_for(job)
+    #   {style => {:width => job.width, :height => job.height, :uid => uid, :content_type => job.mime_type, :size => job.size}}
+    # end
 
 
   end
