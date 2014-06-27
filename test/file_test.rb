@@ -18,6 +18,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
   # process! saves file
   # TODO: remote storage, server root, etc.
+  # todo: test block.
   it "what" do
     uid = Dragonfly.app.datastore.send( :relative_path_for, "aptomo.png")
 
