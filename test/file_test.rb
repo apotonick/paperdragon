@@ -30,20 +30,19 @@ class PaperdragonFileTest < MiniTest::Spec
       job = file.process!
 
       job.must_be_kind_of Dragonfly::Job
+      job.size.must_equal 9632
       exists?(uid).must_equal true
     end
 
     # block
     it do
-      puts file.data.size
+      # puts file.data.size # 9632 bytes
       file.process! do |job|
         job.thumb!("16x16")
       end
 
       # fixme: wrong data:
-      puts file.data.size
-
-
+      file.data.size.must_equal 457 # smaller after thumb!
     end
   end
 
@@ -64,6 +63,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
   describe "#reprocess!" do
     # existing:
+    let (:file)     { Paperdragon::File.new(uid) }
     let (:original) { Paperdragon::File.new(uid, logo) }
 
     before do
@@ -72,11 +72,19 @@ class PaperdragonFileTest < MiniTest::Spec
     end
 
     it do
-      job = Paperdragon::File.new(uid).reprocess!(original, new_uid = generate_uid)
+      job = file.reprocess!(original, new_uid = generate_uid)
 
       job.must_be_kind_of Dragonfly::Job
       exists?(uid).must_equal false # deleted
       exists?(new_uid).must_equal true
+    end
+
+    it do
+      job = file.reprocess!(original, new_uid = generate_uid) do |j|
+        j.thumb!("16x16")
+      end
+
+      file.data.size.must_equal 457
     end
   end
 

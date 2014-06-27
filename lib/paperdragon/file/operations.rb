@@ -4,11 +4,13 @@ module Paperdragon
       def process!
         job = Dragonfly.app.new_job(data)
 
+puts job.size
         yield job if block_given?
 
         puts "........................STORE  (process): #{uid}"
         job.store(path: uid, :headers => {'x-amz-acl' => 'public-read', "Content-Type" => "image/jpeg"})
 
+        @data = nil
         job # TODO: return meta-data?
         #meta_data_for(job) # DISCUSS: override old meta_data? TEST!
       end
@@ -38,7 +40,7 @@ module Paperdragon
         puts "........................DELETE (reprocess): #{old_uid}"
         Dragonfly.app.destroy(old_uid)
 
-        # @data = nil
+        @data = nil
         # meta_data_for(job) # DISCUSS: override old meta_data? TEST!
         job
       end
