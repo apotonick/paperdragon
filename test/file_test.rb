@@ -19,14 +19,32 @@ class PaperdragonFileTest < MiniTest::Spec
   # process! saves file
   # TODO: remote storage, server root, etc.
   # todo: test block.
-  it "what" do
-    uid = Dragonfly.app.datastore.send( :relative_path_for, "aptomo.png")
+  let (:uid) { Dragonfly.app.datastore.send(:relative_path_for, "aptomo.png") }
 
-    file = Paperdragon::File.new(uid, logo)
-    file.process!
 
-    # file.url.must_equal uid
-    puts uid
-    File.exists?("public/paperdragon/" + uid).must_equal true
+  describe "#process!" do
+    it do
+      file = Paperdragon::File.new(uid, logo)
+      file.process!
+
+      exists?(uid).must_equal true
+    end
+  end
+
+
+  describe "#delete!" do
+    it do
+      file = Paperdragon::File.new(uid, logo)
+      file.process!
+      exists?(uid).must_equal true
+
+      file.delete!
+      exists?(uid).must_equal false
+    end
+  end
+
+
+  def exists?(uid)
+    File.exists?("public/paperdragon/" + uid)
   end
 end

@@ -21,8 +21,9 @@ module Paperdragon
 
     # attr_reader :meta_data
 
-    require 'paperdragon/file/process'
+    require 'paperdragon/file/operations'
     include Process
+    include Delete
 
 
   private
