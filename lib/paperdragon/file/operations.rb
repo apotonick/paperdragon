@@ -38,6 +38,7 @@ module Paperdragon
         puts "........................DELETE (reprocess): #{old_uid}"
         Dragonfly.app.destroy(old_uid)
 
+        # @data = nil
         # meta_data_for(job) # DISCUSS: override old meta_data? TEST!
         job
       end

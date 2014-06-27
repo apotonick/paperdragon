@@ -1,6 +1,7 @@
 require 'test_helper'
 
 Dragonfly.app.configure do
+  plugin :imagemagick
 
   #url_host 'http://some.domain.com:4000'
 
@@ -23,12 +24,26 @@ class PaperdragonFileTest < MiniTest::Spec
 
 
   describe "#process!" do
+    let (:file) { file = Paperdragon::File.new(uid, logo) }
+
     it do
-      file = Paperdragon::File.new(uid, logo)
       job = file.process!
 
       job.must_be_kind_of Dragonfly::Job
       exists?(uid).must_equal true
+    end
+
+    # block
+    it do
+      puts file.data.size
+      file.process! do |job|
+        job.thumb!("16x16")
+      end
+
+      # fixme: wrong data:
+      puts file.data.size
+
+
     end
   end
 
