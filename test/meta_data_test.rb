@@ -16,7 +16,7 @@ class MetadataTest < MiniTest::Spec
     it { subject[:thumb][:uid].must_equal "ds3661339/kristylee-38.jpg" }
 
     it { subject[:page].must_equal({}) }
-    it { subject[:page][:width].must_equal "" }
+    it { subject[:page][:width].must_equal nil }
   end
 
 
@@ -24,6 +24,6 @@ class MetadataTest < MiniTest::Spec
     subject { Paperdragon::Metadata.new(nil) }
 
     it { subject[:page].must_equal({}) }
-    it { subject[:page][:width].must_equal "" }
+    it { subject[:page][:width].must_equal nil }
   end
 end

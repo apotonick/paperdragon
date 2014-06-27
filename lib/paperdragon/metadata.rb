@@ -7,7 +7,7 @@ module Paperdragon
     end
 
     def [](name)
-      @hash[name] || Hash.new("")
+      @hash[name] || {}
     end
   end
 end
