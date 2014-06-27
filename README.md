@@ -18,12 +18,15 @@ Paperclip Compatibility
 1. Stores file to same location as paperclip would do.
 2. `Photo#url` will return the same URL as paperclip.
 3. P::Model image.url(:thumb) still works, your rendering code will still work.
+4. Cleaner API for generating URLs. For example, we needed to copy images from production to staging. With paperclip, it was impossible to create paths for both environments.
 
 Paperclip uses several columns to compute the UID. Once this is done, it doesn't store that UID in the database but updates the respective fields, which makes it a bit awkward to maintain.
 
 Paperdragon simply dumps the image uid along with meta data into image_meta_data.
 
 You have to take care of updating image_fingerprint etc yourself when changing stuff and still using paperclip to compute urls.
+
+
 
 
 Original paperclip UID:
