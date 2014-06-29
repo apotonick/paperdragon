@@ -1,18 +1,16 @@
 module Paperdragon
   class File
     module Process
-      def process!
+      def process!(metadata={})
         job = Dragonfly.app.new_job(data)
 
-puts job.size
         yield job if block_given?
 
         puts "........................STORE  (process): #{uid}"
         job.store(path: uid, :headers => {'x-amz-acl' => 'public-read', "Content-Type" => "image/jpeg"})
 
         @data = nil
-        job # TODO: return meta-data?
-        #meta_data_for(job) # DISCUSS: override old meta_data? TEST!
+        metadata_for(job, metadata)
       end
     end
 
@@ -26,7 +24,7 @@ puts job.size
 
 
     module Reprocess
-      def reprocess!(original, fingerprint)
+      def reprocess!(original, fingerprint, metadata={})
         job = Dragonfly.app.new_job(original.data) # inheritance here somehow?
 
         yield job if block_given?
@@ -41,8 +39,7 @@ puts job.size
         Dragonfly.app.destroy(old_uid)
 
         @data = nil
-        # meta_data_for(job) # DISCUSS: override old meta_data? TEST!
-        job
+        metadata_for(job, metadata)
       end
     end
   end

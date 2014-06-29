@@ -12,6 +12,16 @@ Add this line to your application's Gemfile:
 * you control processing and storage, e.g. first thumbnails and cropping, then process the rest. easy to sidekiq.
 
 
+File
+
+All process methods return Metadata hash
+yield Job, save it from the block if you need it
+override #default_metadata_for when you wanna change it
+last arg in process method gets merged into metadata hash
+
+Design
+Operations in File look like scripts per design. I could have abstracted various steps into higher level methods, however, as file processing _is_ a lot scripting, I decided to sacrifice redundancy for better understandable code.
+
 
 Paperclip Compatibility
 

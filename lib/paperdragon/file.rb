@@ -46,11 +46,14 @@ module Paperdragon
     #     attachment: :images)
     # end
 
-    # def meta_data_for(job)
-    #   {style => {:width => job.width, :height => job.height, :uid => uid, :content_type => job.mime_type, :size => job.size}}
-    # end
+    # Override if you want to include/exclude properties in this file metadata.
+    def default_metadata_for(job)
+      {:width => job.width, :height => job.height, :uid => uid, :content_type => job.mime_type, :size => job.size}
+    end
 
-
+    def metadata_for(job, additional={})
+      default_metadata_for(job).merge(additional)
+    end
   end
 
 

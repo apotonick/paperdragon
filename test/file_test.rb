@@ -19,7 +19,6 @@ class PaperdragonFileTest < MiniTest::Spec
 
   # process! saves file
   # TODO: remote storage, server root, etc.
-  # todo: test block.
   let (:uid) { generate_uid }
 
 
@@ -27,10 +26,9 @@ class PaperdragonFileTest < MiniTest::Spec
     let (:file) { file = Paperdragon::File.new(uid, logo) }
 
     it do
-      job = file.process!
+      metadata = file.process!
 
-      job.must_be_kind_of Dragonfly::Job
-      job.size.must_equal 9632
+      metadata.must_equal({:width=>216, :height=>63, :uid=>uid, :content_type=>"image/png", :size=>9632})
       exists?(uid).must_equal true
     end
 
@@ -41,8 +39,14 @@ class PaperdragonFileTest < MiniTest::Spec
         job.thumb!("16x16")
       end
 
-      # fixme: wrong data:
       file.data.size.must_equal 457 # smaller after thumb!
+    end
+
+    # additional metadata
+    it do
+      file.process!(:cropping => "16x16") do |job|
+        job.thumb!("16x16")
+      end.must_equal({:width=>16, :height=>5, :uid=>uid, :content_type=>"image/png", :size=>457, :cropping=>"16x16"})
     end
   end
 
@@ -72,9 +76,11 @@ class PaperdragonFileTest < MiniTest::Spec
     end
 
     it do
-      job = file.reprocess!(original, new_uid = generate_uid)
+      meta_data = file.reprocess!(original, new_uid = generate_uid)
 
-      job.must_be_kind_of Dragonfly::Job
+      # it
+      meta_data.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
+      # it
       exists?(uid).must_equal false # deleted
       exists?(new_uid).must_equal true
     end
@@ -82,6 +88,7 @@ class PaperdragonFileTest < MiniTest::Spec
     it do
       job = file.reprocess!(original, new_uid = generate_uid) do |j|
         j.thumb!("16x16")
+
       end
 
       file.data.size.must_equal 457
