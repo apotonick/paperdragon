@@ -1,9 +1,9 @@
 module Paperdragon
   # A physical file with a UID.
   class File
-    def initialize(uid, file=nil)
+    def initialize(uid)
       @uid  = Uid.new(uid)
-      @data = file
+      @data = nil
     end
 
     def uid
@@ -33,8 +33,6 @@ module Paperdragon
     def uid!(new_uid)
       @uid = Uid.new(new_uid)
     end
-
-    attr_reader :style # we need that in #meta_data_for.
 
     # Override if you want to include/exclude properties in this file metadata.
     def default_metadata_for(job)

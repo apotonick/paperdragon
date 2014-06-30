@@ -1,8 +1,8 @@
 module Paperdragon
   class File
     module Process
-      def process!(metadata={})
-        job = Dragonfly.app.new_job(data)
+      def process!(file, metadata={})
+        job = Dragonfly.app.new_job(file)
 
         yield job if block_given?
 

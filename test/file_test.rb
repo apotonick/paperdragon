@@ -23,10 +23,10 @@ class PaperdragonFileTest < MiniTest::Spec
 
 
   describe "#process!" do
-    let (:file) { file = Paperdragon::File.new(uid, logo) }
+    let (:file) { file = Paperdragon::File.new(uid) }
 
     it do
-      metadata = file.process!
+      metadata = file.process!(logo)
 
       metadata.must_equal({:width=>216, :height=>63, :uid=>uid, :content_type=>"image/png", :size=>9632})
       exists?(uid).must_equal true
@@ -35,7 +35,7 @@ class PaperdragonFileTest < MiniTest::Spec
     # block
     it do
       # puts file.data.size # 9632 bytes
-      file.process! do |job|
+      file.process!(logo) do |job|
         job.thumb!("16x16")
       end
 
@@ -44,7 +44,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
     # additional metadata
     it do
-      file.process!(:cropping => "16x16") do |job|
+      file.process!(logo, :cropping => "16x16") do |job|
         job.thumb!("16x16")
       end.must_equal({:width=>16, :height=>5, :uid=>uid, :content_type=>"image/png", :size=>457, :cropping=>"16x16"})
     end
@@ -53,8 +53,8 @@ class PaperdragonFileTest < MiniTest::Spec
 
   describe "#delete!" do
     it do
-      file = Paperdragon::File.new(uid, logo)
-      file.process!
+      file = Paperdragon::File.new(uid)
+      file.process!(logo)
       exists?(uid).must_equal true
 
       job = Paperdragon::File.new(uid).delete!
@@ -68,12 +68,14 @@ class PaperdragonFileTest < MiniTest::Spec
   describe "#reprocess!" do
     # existing:
     let (:file)     { Paperdragon::File.new(uid) }
-    let (:original) { Paperdragon::File.new(uid, logo) }
+    let (:original) { Paperdragon::File.new("original/#{uid}") }
     let (:new_uid) { generate_uid }
 
     before do
-      original.process!
-      exists?(uid).must_equal true
+      original.process!(logo) # original/uid exists.
+      exists?(original.uid).must_equal true
+      file.process!(logo)
+      exists?(file.uid).must_equal true # file to be reprocessed exists (to test delete).
     end
 
     it do
@@ -100,11 +102,11 @@ class PaperdragonFileTest < MiniTest::Spec
   describe "#rename!" do
     # existing:
     let (:file)     { Paperdragon::File.new(uid) }
-    let (:original) { Paperdragon::File.new(uid, logo) }
+    let (:original) { Paperdragon::File.new(uid) }
     let (:new_uid) { generate_uid }
 
     before do
-      original.process!
+      original.process!(logo)
       exists?(uid).must_equal true
     end
 
