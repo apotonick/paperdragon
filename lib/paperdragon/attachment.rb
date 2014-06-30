@@ -16,6 +16,10 @@ module Paperdragon
         self.class.file_class.new(uid)
       end
 
+      def task(upload=nil)
+        Task.new(self, upload)
+      end
+
     private
       def build_uid(*args)
         uid_from(*args)
