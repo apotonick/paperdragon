@@ -45,7 +45,7 @@ module Paperdragon
 
 
     module Rename
-      def rename!(fingerprint)
+      def rename!(fingerprint, metadata={})
         old_uid = uid
         uid!(fingerprint)
 
@@ -62,7 +62,7 @@ module Paperdragon
 
         # TODO: this retrieves the file, which is unnecessary.
         job = Dragonfly.app.new_job(data)
-        metadata_for(job)
+        metadata_for(job, metadata={})
       end
     end
   end
