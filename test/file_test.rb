@@ -69,6 +69,7 @@ class PaperdragonFileTest < MiniTest::Spec
     # existing:
     let (:file)     { Paperdragon::File.new(uid) }
     let (:original) { Paperdragon::File.new(uid, logo) }
+    let (:new_uid) { generate_uid }
 
     before do
       original.process!
@@ -76,22 +77,47 @@ class PaperdragonFileTest < MiniTest::Spec
     end
 
     it do
-      meta_data = file.reprocess!(original, new_uid = generate_uid)
+      metadata = file.reprocess!(original, new_uid)
 
       # it
-      meta_data.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
+      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
       # it
       exists?(uid).must_equal false # deleted
       exists?(new_uid).must_equal true
     end
 
     it do
-      job = file.reprocess!(original, new_uid = generate_uid) do |j|
+      job = file.reprocess!(original, new_uid) do |j|
         j.thumb!("16x16")
 
       end
 
       file.data.size.must_equal 457
+    end
+  end
+
+
+  describe "#rename!" do
+    # existing:
+    let (:file)     { Paperdragon::File.new(uid) }
+    let (:original) { Paperdragon::File.new(uid, logo) }
+    let (:new_uid) { generate_uid }
+
+    before do
+      original.process!
+      exists?(uid).must_equal true
+    end
+
+    it do
+      metadata = file.rename!(new_uid) do |uid, new_uid|
+        File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid) # DISCUSS: should that be simpler?
+      end
+
+      # it
+      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
+
+      exists?(uid).must_equal false # deleted
+      exists?(new_uid).must_equal true
     end
   end
 

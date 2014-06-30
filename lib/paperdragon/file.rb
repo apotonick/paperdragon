@@ -25,6 +25,7 @@ module Paperdragon
     include Process
     include Delete
     include Reprocess
+    include Rename
 
 
   private
