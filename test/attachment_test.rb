@@ -30,7 +30,7 @@ end
 
 class AttachmentModelSpec < MiniTest::Spec
   class Attachment < Paperdragon::Attachment
-    include Paperdragon::Attachment::Model
+    include Paperdragon::Attachment::Model # model.image_meta_data
 
     class File < Paperdragon::File
     end

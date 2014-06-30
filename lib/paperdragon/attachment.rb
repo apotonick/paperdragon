@@ -12,12 +12,12 @@ module Paperdragon
       def [](style)
         file_metadata = @metadata[style]
 
-        uid = file_metadata[:uid] || build_uri(style)
+        uid = file_metadata[:uid] || build_uid(style)
         self.class.file_class.new(uid)
       end
 
     private
-      def build_uri(*args)
+      def build_uid(*args)
         uid_from(*args)
       end
 
@@ -28,13 +28,14 @@ module Paperdragon
     include InstanceMethods
 
 
+    # Grab model.image_meta_data in initialize. If this is not present, call #uid_from(model, style)
     module Model
       def initialize(model)
         @model = model
         super(model.image_meta_data) # only dependency to model.
       end
 
-      def build_uri(style)
+      def build_uid(style)
         uid_from(@model, style)
       end
     end
