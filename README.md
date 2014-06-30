@@ -9,7 +9,18 @@ Add this line to your application's Gemfile:
     gem 'paperdragon'
 
 
+Paperdragon is completely decoupled from ActiveRecord. Attachment-related calls are delegated to paperdragon objects, the model is solely used for persisting file UIDs.
+
+Where Paperclip or Carrierwave offer you a handy DSL to configure the processing, Paperdragon comes with an API. You _program_ what you wanna do. This is only a tiny little bit more code and gives you complete control over the entire task.
+
+
+
+The goal is to make you _understand_ what is going on.
+
 * you control processing and storage, e.g. first thumbnails and cropping, then process the rest. easy to sidekiq.
+error handling
+
+
 
 
 File

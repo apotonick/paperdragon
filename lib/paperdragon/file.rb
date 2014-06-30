@@ -36,17 +36,6 @@ module Paperdragon
 
     attr_reader :style # we need that in #meta_data_for.
 
-    # def uid_for(model, class_name, style)
-    #   Uid.from(
-    #     id: model.id,
-    #     file_name: model.image_file_name, # TODO: retrieve from somewhere else.
-    #     updated_at: model.image_updated_at.to_i, # TODO: retrieve from somewhere else.
-    #     fingerprint: model.image_fingerprint, # TODO: retrieve from somewhere else.
-    #     style: style,
-    #     class_name: class_name,
-    #     attachment: :images)
-    # end
-
     # Override if you want to include/exclude properties in this file metadata.
     def default_metadata_for(job)
       {:width => job.width, :height => job.height, :uid => uid, :content_type => job.mime_type, :size => job.size}
@@ -56,12 +45,4 @@ module Paperdragon
       default_metadata_for(job).merge(additional)
     end
   end
-
-
-   # @style    = style
-   #    @category = category
-
-
-   #    # ar specific shizzle:
-   #    @meta_data  = Paperdragon::Metadata.new( model_with_paperclip_attachment.image_meta_data) # DISCUSS: meta data for all styles?
 end

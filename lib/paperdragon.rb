@@ -8,3 +8,4 @@ end
 require 'paperdragon/file'
 require 'paperdragon/metadata'
 require 'paperdragon/uid'
+require 'paperdragon/attachment'
