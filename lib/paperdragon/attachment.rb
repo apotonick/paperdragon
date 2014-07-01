@@ -20,6 +20,11 @@ module Paperdragon
         Task.new(self, upload)
       end
 
+      # def rebuild_uid(style, old_uid, *args)
+      def rebuild_uid(file, fingerprint)
+        "#{file.uid}-#{fingerprint}"
+      end
+
     private
       def build_uid(*args)
         uid_from(*args)

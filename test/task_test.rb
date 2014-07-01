@@ -29,4 +29,26 @@ class TaskSpec < MiniTest::Spec
       end
     end
   end
+
+
+  describe "#reprocess!" do
+    let (:original) { Paperdragon::File.new("original/pic") }
+
+    before do
+      original.process!(logo) # original/uid exists.
+      exists?(original.uid).must_equal true
+    end
+
+    let (:subject) { Attachment.new(nil).task }
+    it do
+      subject.reprocess!(:original, original, "/2/original")
+      subject.reprocess!(:thumb,    original, "/2/thumb") { |j| j.thumb!("16x16") }
+
+      # it
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original-/2/original", :content_type=>"application/octet-stream", :size=>9632}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb-/2/thumb", :content_type=>"application/octet-stream", :size=>457}})
+      # it
+      # exists?(original.uri).must_equal false # deleted
+      # exists?(new_uid).must_equal true
+    end
+  end
 end

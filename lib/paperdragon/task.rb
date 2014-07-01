@@ -1,4 +1,5 @@
 module Paperdragon
+  # Gives a simple API for processing multiple versions of a single attachment.
   class Task
     def initialize(attachment, upload=nil)
       @attachment = attachment
@@ -18,7 +19,7 @@ module Paperdragon
 
     def reprocess!(style, original, fingerprint, &block)
       version = file(style)
-      new_uid = version.uid_for(fingerprint) # requirement for the File subclass!
+      new_uid = @attachment.rebuild_uid(version, fingerprint) # requirement for the File subclass!
 
       @metadata.merge!(style => version.reprocess!(original, new_uid, &block))
     end
