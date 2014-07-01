@@ -19,14 +19,14 @@ module Paperdragon
 
     def reprocess!(style, original, fingerprint, &block)
       version = file(style)
-      new_uid = @attachment.rebuild_uid(version, fingerprint) # requirement for the File subclass!
+      new_uid = @attachment.rebuild_uid(version, fingerprint)
 
       @metadata.merge!(style => version.reprocess!(original, new_uid, &block))
     end
 
     def rename!(style, fingerprint, &block)
       version = file(style)
-      new_uid = version.uid_for(fingerprint) # requirement for the File subclass!
+      new_uid = @attachment.rebuild_uid(version, fingerprint)
 
       @metadata.merge!(style => version.rename!(new_uid, &block))
     end

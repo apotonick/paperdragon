@@ -45,24 +45,25 @@ end
 
 class PaperclipModelTest < MiniTest::Spec
   class Avatar
-    class Photo # TODO: replace with Paperdragon::File
-      def initialize(model, style)
-        @uid = "#{model.class}-#{style}"
-      end
-
-      def url
-        @uid
-      end
+    class Photo < Paperdragon::File
     end
 
+    class Attachment < Paperdragon::Attachment
+      self.file_class = Photo
+    end
 
     include Paperdragon::Paperclip::Model
-    processable :image, Photo
+    processable :image, Attachment
+
+
+    def image_meta_data
+      {:thumb => {:uid => "Avatar-thumb"}}
+    end
   end
 
   # old paperclip style
-  it { Avatar.new.image.url(:thumb).must_equal "PaperclipModelTest::Avatar-thumb" }
+  it { Avatar.new.image.url(:thumb).must_equal "/paperdragon/uid/thumb" }
 
   # paperdragon style
-  it { Avatar.new.image(:thumb).url.must_equal "PaperclipModelTest::Avatar-thumb" }
+  it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/uid/thumb" }
 end
