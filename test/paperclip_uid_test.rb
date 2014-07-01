@@ -12,19 +12,6 @@ class PaperclipUidTest < MiniTest::Spec
   it { Uid.from(options).
     must_equal "system/avatars/image/000/001/234/9bf15e5874b3234c133f7500e6d615747f709e64/original/kristylee.jpg" }
 
-  # describe "#dup" do
-  #   let (:uid) { Uid.new(options) }
-
-  #   it do
-  #     uid.dup(:class_name => :portraits).call.
-  #       must_equal "system/portraits/image/000/001/234/df0038432073272a49b70a6461a83b4c9b4102ad/original/kristylee.jpg"
-
-  #     # doesn't alter the original UID.
-  #     uid.call.must_equal "system/avatars/image/000/001/234/9bf15e5874b3234c133f7500e6d615747f709e64/original/kristylee.jpg"
-  #   end
-  # end
-
-
 
   class UidWithFingerprint < Paperdragon::Paperclip::Uid
     class Computer < Computer
@@ -50,6 +37,8 @@ class PaperclipModelTest < MiniTest::Spec
 
     class Attachment < Paperdragon::Attachment
       self.file_class = Photo
+
+      include Paperdragon::Attachment::Model
     end
 
     include Paperdragon::Paperclip::Model
@@ -62,8 +51,8 @@ class PaperclipModelTest < MiniTest::Spec
   end
 
   # old paperclip style
-  it { Avatar.new.image.url(:thumb).must_equal "/paperdragon/uid/thumb" }
+  it { Avatar.new.image.url(:thumb).must_equal "/paperdragon/Avatar-thumb" }
 
   # paperdragon style
-  it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/uid/thumb" }
+  it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/Avatar-thumb" }
 end

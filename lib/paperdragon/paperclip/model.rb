@@ -16,7 +16,7 @@ module Paperdragon
           # This allows using both paperclip's `image.url(:thumb)` and the new paperdragon style
           # `image(:thumb).url`.
           mod = Module.new do
-            define_method name do |style=nil| # e.g. Avatar#image
+            define_method name do # e.g. Avatar#image
               Proxy.new(self, attachment_class)  # provide paperclip DSL.
             end
           end
@@ -28,7 +28,7 @@ module Paperdragon
       # Needed to expose Paperclip's DSL, like avatar.image.url(:thumb).
       class Proxy
         def initialize(model, attachment_class)
-          @attachment = attachment_class.new(@model)
+          @attachment = attachment_class.new(model)
         end
 
         def [](*args)
