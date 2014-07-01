@@ -1,12 +1,14 @@
 module Paperdragon
   # A physical file with a UID.
   class File
-    def initialize(uid)
-      @uid  = uid
-      @data = nil
+    def initialize(uid, options={})
+      @uid     = uid
+      @options = options
+      @data    = nil # DISCUSS: do we need that here?
     end
 
-    attr_reader :uid
+    attr_reader :uid, :options
+    alias_method :metadata, :options
 
     def url(opts={})
       Dragonfly.app.remote_url_for(uid, opts)

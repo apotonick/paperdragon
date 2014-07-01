@@ -13,7 +13,7 @@ module Paperdragon
         file_metadata = @metadata[style]
 
         uid = file_metadata[:uid] || build_uid(style)
-        self.class.file_class.new(uid)
+        self.class.file_class.new(uid, file_metadata)
       end
 
       def task(upload=nil)

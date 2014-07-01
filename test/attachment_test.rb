@@ -17,6 +17,7 @@ class AttachmentSpec < MiniTest::Spec
 
     it { subject[:original].must_be_kind_of AttachmentSpec::Attachment::File }
     it { subject[:original].uid.must_equal "/uid/1234.jpg" }
+    it { subject[:original].options.must_equal({:uid=>"/uid/1234.jpg"}) }
   end
 
   describe "new" do
@@ -24,6 +25,7 @@ class AttachmentSpec < MiniTest::Spec
 
     it { subject[:original].must_be_kind_of AttachmentSpec::Attachment::File }
     it { subject[:original].uid.must_equal "/uid/original" }
+    it { subject[:original].options.must_equal({}) }
   end
 end
 
