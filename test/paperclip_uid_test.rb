@@ -14,14 +14,8 @@ class PaperclipUidTest < MiniTest::Spec
 
 
   class UidWithFingerprint < Paperdragon::Paperclip::Uid
-    class Computer < Computer
-      def call
-        "#{root}/#{class_name}/#{attachment}/#{id_partition}/#{hash}/#{style}/#{fingerprint}-#{file_name}"
-      end
-    end
-
-    def self.from(options, computer=Computer)
-      super
+    def call
+      "#{root}/#{class_name}/#{attachment}/#{id_partition}/#{hash}/#{style}/#{fingerprint}-#{file_name}"
     end
   end
 

@@ -4,73 +4,63 @@ module Paperdragon
     # Compute a UID to be compatible with paperclip. This class is meant to be subclassed so you can write
     # your specific file path.
     # Immutable
-    class Uid < String
-      def self.from(options, computer=Computer)
-        new computer.new(options).call
+    class Uid
+      def self.from(options)
+        new(options).call
+      end
+
+      # "/system/:class/:attachment/:id_partition/:style/:filename"
+      def initialize(options)
+        @class_name  = options[:class_name]
+        @attachment  = options[:attachment]
+        @id          = options[:id]
+        @style       = options[:style]
+        @updated_at  = options[:updated_at]
+        @file_name   = options[:file_name]
+        @hash_secret = options[:hash_secret]
+        @fingerprint = options[:fingerprint] # not used in default.
+      end
+
+      def call
+        # default:
+        # system/:class/:attachment/:id_partition/:style/:filename
+        "#{root}/#{class_name}/#{attachment}/#{id_partition}/#{hash}/#{style}/#{file_name}"
       end
 
     private
+      attr_reader :class_name, :attachment, :id, :style, :file_name, :hash_secret, :updated_at, :fingerprint
 
-      class Computer
-        # "/system/:class/:attachment/:id_partition/:style/:filename"
-        def initialize(options)
-          @class_name  = options[:class_name]
-          @attachment  = options[:attachment]
-          @id          = options[:id]
-          @style       = options[:style]
-          @updated_at  = options[:updated_at]
-          @file_name   = options[:file_name]
-          @hash_secret = options[:hash_secret]
-          @fingerprint = options[:fingerprint] # not used in default.
+      def root
+        "system"
+      end
+
+      def id_partition
+        IdPartition.call(id)
+      end
+
+      def hash
+        HashKey.call(hash_secret, class_name, attachment, id, style, updated_at)
+      end
+
+
+      class IdPartition
+        def self.call(id)
+          ("%09d" % id).scan(/\d{3}/).join("/") # FIXME: only works with integers.
         end
+      end
 
-        def call
-          # default:
-          # system/:class/:attachment/:id_partition/:style/:filename
-          "#{root}/#{class_name}/#{attachment}/#{id_partition}/#{hash}/#{style}/#{file_name}"
+
+      # ":class/:attachment/:id/:style/:updated_at"
+      class HashKey
+        require 'openssl' unless defined?(OpenSSL)
+
+        # cover_girls/images/4841/thumb/1402617353
+        def self.call(secret, class_name, attachment, id, style, updated_at)
+          data = "#{class_name}/#{attachment}/#{id}/#{style}/#{updated_at}"
+          # puts "[Paperdragon] HashKey <--------------------- #{data}"
+          OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, secret, data)
         end
-
-        def dup(options={})
-          super().tap do |uid|
-            options.each { |k,v| uid.instance_variable_set(:"@#{k}", v) }
-          end
-        end
-
-      private
-        attr_reader :class_name, :attachment, :id, :style, :file_name, :hash_secret, :updated_at, :fingerprint
-
-        def root
-          "system"
-        end
-
-        def id_partition
-          IdPartition.call(id)
-        end
-
-        def hash
-          HashKey.call(hash_secret, class_name, attachment, id, style, updated_at)
-        end
-
-
-        class IdPartition
-          def self.call(id)
-            ("%09d" % id).scan(/\d{3}/).join("/") # FIXME: only works with integers.
-          end
-        end
-
-
-        # ":class/:attachment/:id/:style/:updated_at"
-        class HashKey
-          require 'openssl' unless defined?(OpenSSL)
-
-          # cover_girls/images/4841/thumb/1402617353
-          def self.call(secret, class_name, attachment, id, style, updated_at)
-            data = "#{class_name}/#{attachment}/#{id}/#{style}/#{updated_at}"
-            # puts "[Paperdragon] HashKey <--------------------- #{data}"
-            OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, secret, data)
-          end
-        end
-      end # Computer
+      end
     end
   end
 end
