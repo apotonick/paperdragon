@@ -1,6 +1,5 @@
 require 'test_helper'
 
-require 'paperdragon/model'
 class PaperdragonModelTest < MiniTest::Spec
   class Avatar
     class Photo < Paperdragon::File

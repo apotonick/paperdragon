@@ -1,8 +1,10 @@
+require 'uber/inheritable_attr'
+
 module Paperdragon
   class Attachment
-    class << self
-      attr_accessor :file_class # !!! this is NOT inheritable (do we need that?).
-    end
+    extend Uber::InheritableAttr
+    inheritable_attr :file_class #, strategy: ->{ tap{} }
+    self.file_class = ::Paperdragon::File # default value. # !!! be careful, this gets cloned in subclasses and thereby becomes a subclass of PD:File.
 
     module InstanceMethods
       def initialize(metadata)

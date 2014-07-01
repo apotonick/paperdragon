@@ -1,5 +1,3 @@
-require 'paperdragon/model'
-
 module Paperdragon
   class Paperclip
     module Model

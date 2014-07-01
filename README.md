@@ -19,7 +19,7 @@ The goal is to make you _understand_ what is going on.
 
 * you control processing and storage, e.g. first thumbnails and cropping, then process the rest. easy to sidekiq.
 error handling
-
+UID generation handled by you. also, updating (e.g. new fingerprint)
 
 
 
