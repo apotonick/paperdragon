@@ -12,12 +12,19 @@ end
 
 class PaperdragonFileTest < MiniTest::Spec
   it { Paperdragon::File.new("123").uid.must_equal "123" }
-
   it { Paperdragon::File.new("123").url.must_equal "/paperdragon/123" } # FIXME: how to add host?
+  it { Paperdragon::File.new("123") }
 
   describe "#metadata" do
     it { Paperdragon::File.new("123").metadata.must_equal({}) }
     it { Paperdragon::File.new("123", :width => 16).metadata.must_equal({:width => 16}) }
+  end
+
+  describe "#data" do
+    it do
+      Paperdragon::File.new(uid).process!(logo)
+      Paperdragon::File.new(uid).data.size.must_equal 9632
+    end
   end
 
   let (:logo) { Pathname("test/fixtures/apotomo.png") }
