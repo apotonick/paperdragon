@@ -9,7 +9,7 @@ class PaperclipUidTest < MiniTest::Spec
     :style => :original, :updated_at => Time.parse("20-06-2014 9:40:59").to_i,
     :file_name => "kristylee.jpg", :hash_secret => "secret"} }
 
-  it { Uid.from(options).call.
+  it { Uid.from(options).
     must_equal "system/avatars/image/000/001/234/9bf15e5874b3234c133f7500e6d615747f709e64/original/kristylee.jpg" }
 
   # describe "#dup" do
@@ -38,7 +38,7 @@ class PaperclipUidTest < MiniTest::Spec
     end
   end
 
-  it { UidWithFingerprint.from(options.merge(:fingerprint => 8675309)).call.
+  it { UidWithFingerprint.from(options.merge(:fingerprint => 8675309)).
     must_equal "system/avatars/image/000/001/234/9bf15e5874b3234c133f7500e6d615747f709e64/original/8675309-kristylee.jpg" }
 end
 

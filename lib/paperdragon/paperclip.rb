@@ -9,10 +9,6 @@ module Paperdragon
         new computer.new(options).call
       end
 
-      def call
-        self
-      end
-
     private
 
       class Computer

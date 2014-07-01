@@ -2,13 +2,11 @@ module Paperdragon
   # A physical file with a UID.
   class File
     def initialize(uid)
-      @uid  = Uid.new(uid)
+      @uid  = uid
       @data = nil
     end
 
-    def uid
-      @uid.call
-    end
+    attr_reader :uid
 
     def url(opts={})
       Dragonfly.app.remote_url_for(uid, opts)
@@ -31,7 +29,7 @@ module Paperdragon
   private
     # replaces the UID.
     def uid!(new_uid)
-      @uid = Uid.new(new_uid)
+      @uid = new_uid
     end
 
     # Override if you want to include/exclude properties in this file metadata.
