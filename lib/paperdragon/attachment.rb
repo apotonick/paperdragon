@@ -28,6 +28,7 @@ module Paperdragon
       end
 
     private
+      # Computes UID when File doesn't have one, yet.
       def build_uid(*args)
         uid_from(*args)
       end
