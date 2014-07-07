@@ -29,8 +29,8 @@ class AttachmentSpec < MiniTest::Spec
   class AttachmentUsingOptions < Paperdragon::Attachment
   private
     def build_uid(style)
-        "uid/#{style}/#{options[:filename]}"
-      end
+      "uid/#{style}/#{options[:filename]}"
+    end
   end
 
   # use in new --> build_uid.
