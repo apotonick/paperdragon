@@ -3,6 +3,8 @@ require 'uber/inheritable_attr'
 module Paperdragon
   # Override #build_uid / #rebuild_uid.
   # You may use options.
+  # only saves metadata, does not know about model.
+  # Attachment is a builder for File and knows about metadata. It is responsible for creating UID if metadata is empty.
   class Attachment
     extend Uber::InheritableAttr
     inheritable_attr :file_class #, strategy: ->{ tap{} }
@@ -10,7 +12,7 @@ module Paperdragon
 
     module InstanceMethods
       def initialize(metadata, options={})
-        @metadata = Metadata.new(metadata)
+        @metadata = Metadata.new(@stored = metadata)
         @options  = options # to be used in #(re)build_uid for your convenience.
       end
 
@@ -28,6 +30,11 @@ module Paperdragon
       # def rebuild_uid(style, old_uid, *args)
       def rebuild_uid(file, fingerprint)
         "#{file.uid}-#{fingerprint}"
+      end
+
+      def exists? # should be #uploaded? or #stored?
+        # not sure if i like that kind of state here, so consider method semi-public.
+        !! @stored
       end
 
     private
