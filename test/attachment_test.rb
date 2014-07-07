@@ -25,6 +25,19 @@ class AttachmentSpec < MiniTest::Spec
   end
 
 
+  # test passing options into Attachment and use that in #build_uid.
+  class AttachmentUsingOptions < Paperdragon::Attachment
+  private
+    def build_uid(style)
+        "uid/#{style}/#{options[:filename]}"
+      end
+  end
+
+  # use in new --> build_uid.
+  it { AttachmentUsingOptions.new(nil, {:filename => "apotomo.png"})[:original].uid.must_equal "uid/original/apotomo.png" }
+
+
+  # test using custom File class in Attachment.
   class OverridingAttachment < Paperdragon::Attachment
     class File < Paperdragon::File
       def uid
@@ -42,20 +55,21 @@ class AttachmentModelSpec < MiniTest::Spec
   class Attachment < Paperdragon::Attachment
     include Paperdragon::Attachment::Model # model.image_meta_data
   private
-    def uid_from(model, style)
-      "#{model.class}/uid/#{style}"
+    def build_uid(style)
+      "#{model.class}/uid/#{style}/#{options[:filename]}"
     end
   end
 
   describe "existing" do
-    subject { Attachment.new(OpenStruct.new(:image_meta_data => {:original => {:uid=>"/uid/1234.jpg"}})) }
+    let (:existing) { OpenStruct.new(:image_meta_data => {:original => {:uid=>"/uid/1234.jpg"}}) }
+    subject { Attachment.new(existing) }
 
-    it { subject[:original].uid.must_equal "/uid/1234.jpg" }
+    it { subject[:original].uid.must_equal "/uid/1234.jpg" } # notice that #uid_from is not called.
   end
 
   describe "new" do
-    subject { Attachment.new(OpenStruct.new) }
+    subject { Attachment.new(OpenStruct.new, :filename => "apotomo.png") } # you can pass options into Attachment::new that may be used in #build_uid
 
-    it { subject[:original].uid.must_equal "OpenStruct/uid/original" }
+    it { subject[:original].uid.must_equal "OpenStruct/uid/original/apotomo.png" }
   end
 end

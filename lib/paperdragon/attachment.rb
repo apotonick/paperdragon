@@ -1,20 +1,23 @@
 require 'uber/inheritable_attr'
 
 module Paperdragon
+  # Override #build_uid / #rebuild_uid.
+  # You may use options.
   class Attachment
     extend Uber::InheritableAttr
     inheritable_attr :file_class #, strategy: ->{ tap{} }
     self.file_class = ::Paperdragon::File # default value. # !!! be careful, this gets cloned in subclasses and thereby becomes a subclass of PD:File.
 
     module InstanceMethods
-      def initialize(metadata)
+      def initialize(metadata, options={})
         @metadata = Metadata.new(metadata)
+        @options  = options # to be used in #(re)build_uid for your convenience.
       end
 
       def [](style)
         file_metadata = @metadata[style]
 
-        uid = file_metadata[:uid] || build_uid(style)
+        uid = file_metadata[:uid] || uid_from(style)
         self.class.file_class.new(uid, file_metadata)
       end
 
@@ -28,12 +31,14 @@ module Paperdragon
       end
 
     private
-      # Computes UID when File doesn't have one, yet.
-      def build_uid(*args)
-        uid_from(*args)
+      attr_reader :options
+
+      # Computes UID when File doesn't have one, yet. Called in #initialize.
+      def uid_from(*args)
+        build_uid(*args)
       end
 
-      def uid_from(style)
+      def build_uid(style)
         "uid/#{style}"
       end
     end
@@ -42,14 +47,13 @@ module Paperdragon
 
     # Grab model.image_meta_data in initialize. If this is not present, call #uid_from(model, style)
     module Model
-      def initialize(model)
+      def initialize(model, *args)
         @model = model
-        super(model.image_meta_data) # only dependency to model.
+        super(model.image_meta_data, *args) # only dependency to model.
       end
 
-      def build_uid(style)
-        uid_from(@model, style)
-      end
+    private
+      attr_reader :model
     end
   end
 end
