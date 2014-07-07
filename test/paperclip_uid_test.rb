@@ -33,6 +33,10 @@ class PaperclipModelTest < MiniTest::Spec
       self.file_class = Photo
 
       include Paperdragon::Attachment::Model
+
+      def exists?
+        "Of course!"
+      end
     end
 
     include Paperdragon::Paperclip::Model
@@ -49,4 +53,7 @@ class PaperclipModelTest < MiniTest::Spec
 
   # paperdragon style
   it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/Avatar-thumb" }
+
+  # delegates all unknown methods back to Attachment.
+  it { Avatar.new.image.exists?.must_equal "Of course!" }
 end
