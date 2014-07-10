@@ -50,6 +50,12 @@ class AttachmentSpec < MiniTest::Spec
   end
 
   it { OverridingAttachment.new(nil)[:original].uid.must_equal "from/file" }
+
+
+  # test UID sanitising. this happens only when computing the UID with a new attachment!
+  describe "insane filename" do
+    it { AttachmentUsingOptions.new(nil, {:filename => "(use)? apotomo #1.png"})[:original].uid.must_equal "uid/original/(use)?%20apotomo%20%231.png" }
+  end
 end
 
 
