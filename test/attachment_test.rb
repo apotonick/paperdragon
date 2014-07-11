@@ -9,11 +9,11 @@ class AttachmentSpec < MiniTest::Spec
   end
 
   describe "existing" do
-    subject { Attachment.new({:original => {:uid=>"/uid/1234.jpg"}}) }
+    subject { Attachment.new({:original => {:uid=>"/uid/1234.jpg", :width => 99}}) }
 
     # it { subject[:original].must_be_kind_of Paperdragon::File }
     it { subject[:original].uid.must_equal "/uid/1234.jpg" }
-    it { subject[:original].options.must_equal({:uid=>"/uid/1234.jpg"}) }
+    it { subject[:original].options.must_equal({:uid=>"/uid/1234.jpg", :width => 99}) }
     it { subject.exists?.must_equal true }
   end
 
