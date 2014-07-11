@@ -60,7 +60,8 @@ module Paperdragon
       end
 
       def sanitize(uid)
-        URI::encode(uid)
+        #URI::encode(uid) # this is wrong, we can't send %21 in path to S3!
+        uid.gsub(/(#|\?)/, "_") # escape # and ?, only.
       end
     end
 
