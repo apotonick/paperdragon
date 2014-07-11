@@ -1,5 +1,6 @@
 module Paperdragon
   class File
+    # DISCUSS: allow the metadata passing here or not?
     module Process
       def process!(file, metadata={})
         job = Dragonfly.app.new_job(file)
@@ -45,7 +46,7 @@ module Paperdragon
 
 
     module Rename
-      def rename!(fingerprint, metadata={})
+      def rename!(fingerprint, metadata={}) # fixme: we are currently ignoring the custom metadata.
         old_uid = uid
         uid!(fingerprint)
 
@@ -60,9 +61,7 @@ module Paperdragon
         Dragonfly.app.destroy(old_uid)
 
 
-        # TODO: this retrieves the file, which is unnecessary.
-        job = Dragonfly.app.new_job(data)
-        metadata_for(job, metadata={})
+        self.metadata.merge(:uid => uid) # usually, metadata is already set to the old metadata when File was created via Attachment.
       end
     end
   end

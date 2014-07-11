@@ -113,7 +113,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
   describe "#rename!" do
     # existing:
-    let (:file)     { Paperdragon::File.new(uid) }
+    let (:file)     { Paperdragon::File.new(uid, :size => 99) }
     let (:original) { Paperdragon::File.new(uid) }
     let (:new_uid) { generate_uid }
 
@@ -128,7 +128,8 @@ class PaperdragonFileTest < MiniTest::Spec
       end
 
       # it
-      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
+      # metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
+      metadata.must_equal(:uid=>new_uid, :size => 99) # we DON'T fetch original metadata here anymore.
 
       exists?(uid).must_equal false # deleted
       exists?(new_uid).must_equal true

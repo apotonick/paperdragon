@@ -51,4 +51,28 @@ class TaskSpec < MiniTest::Spec
       # exists?(new_uid).must_equal true
     end
   end
+
+
+  describe "#rename!" do
+    before do
+      attachment = Paperdragon::Attachment.new(nil)
+      @upload_task = attachment.task(logo)
+      @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png", :size=>9632}})
+
+      # raise attachment[:original].url # /paperdragon/uid/original
+      # .uid uid/original
+      exists?(attachment[:original].uid).must_equal true
+    end
+
+    let (:metadata) { @upload_task.metadata }
+
+    # let (:subject) { Attachment.new(nil).task }
+    it do
+      attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png", :size=>9632}}
+      task = attachment.task
+      task.rename!(:original, "new") { |uid, new_uid|
+        File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid)
+      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original-new", :content_type=>"image/png", :size=>9632}})
+    end
+  end
 end
