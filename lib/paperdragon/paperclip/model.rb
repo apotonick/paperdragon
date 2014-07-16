@@ -2,14 +2,11 @@ module Paperdragon
   class Paperclip
     module Model
       def self.included(base)
-        base.send :include, Paperdragon::Model
         base.extend ClassMethods
       end
 
       module ClassMethods
         def processable(name, attachment_class)
-          super # defines #image
-
           # this overrides #image (or whatever the name is) from Paperclip::Model::processable.
           # This allows using both paperclip's `image.url(:thumb)` and the new paperdragon style
           # `image(:thumb).url`.
