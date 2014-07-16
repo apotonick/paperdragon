@@ -12,10 +12,10 @@ module Paperdragon
     private
       # Creates Avatar#image that returns a Paperdragon::File instance.
       def attachment_accessor_for(name, attachment_class)
-        mod = Module.new do # TODO: abstract that into Uber, we use it everywhere.
+        Module.new do # TODO: abstract that into Uber, we use it everywhere.
           define_method name do
             # TODO: make sure image_meta_data is a hash!
-            attachment_class.new(self.image_meta_data)
+            attachment_class.new(self)
           end
         end
       end
