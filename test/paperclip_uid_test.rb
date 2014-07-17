@@ -32,8 +32,6 @@ class PaperclipModelTest < MiniTest::Spec
     class Attachment < Paperdragon::Attachment
       self.file_class = Photo
 
-      include Paperdragon::Attachment::Model
-
       def exists?
         "Of course!"
       end

@@ -16,7 +16,7 @@ module Paperdragon
     module InstanceMethods
       def initialize(metadata, options={})
         @metadata = Metadata.new(@stored = metadata)
-        @options  = options # to be used in #(re)build_uid for your convenience.
+        @options  = options # to be used in #(re)build_uid for your convenience. # DISCUSS: we pass in the model here - is that what we want?
       end
 
       def [](style)
@@ -68,17 +68,5 @@ module Paperdragon
 
     include InstanceMethods
     include SanitizeUid # overrides #uid_from.
-
-
-    # Grab model.image_meta_data in initialize. If this is not present, call #uid_from(model, style)
-    module Model
-      def initialize(model, *args)
-        @model = model
-        super(model.image_meta_data, *args) # only dependency to model.
-      end
-
-    private
-      attr_reader :model
-    end
   end
 end
