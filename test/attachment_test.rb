@@ -11,7 +11,6 @@ class AttachmentSpec < MiniTest::Spec
   describe "existing" do
     subject { Attachment.new({:original => {:uid=>"/uid/1234.jpg", :width => 99}}) }
 
-    # it { subject[:original].must_be_kind_of Paperdragon::File }
     it { subject[:original].uid.must_equal "/uid/1234.jpg" }
     it { subject[:original].options.must_equal({:uid=>"/uid/1234.jpg", :width => 99}) }
     it { subject.exists?.must_equal true }
@@ -20,7 +19,14 @@ class AttachmentSpec < MiniTest::Spec
   describe "new" do
     subject { Attachment.new(nil) }
 
-    # it { subject[:original].must_be_kind_of Paperdragon::File }
+    it { subject[:original].uid.must_equal "/uid/original" }
+    it { subject[:original].options.must_equal({}) }
+    it { subject.exists?.must_equal false }
+  end
+
+  describe "new with empty metadata hash" do
+    subject { Attachment.new({}) }
+
     it { subject[:original].uid.must_equal "/uid/original" }
     it { subject[:original].options.must_equal({}) }
     it { subject.exists?.must_equal false }

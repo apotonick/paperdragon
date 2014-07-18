@@ -11,6 +11,7 @@ class MetadataTest < MiniTest::Spec
 
     subject { Paperdragon::Metadata.new(valid) }
 
+    it { subject.populated?.must_equal true }
     it { subject[:original][:width].must_equal 960 }
     it { subject[:original][:uid].must_equal "403661339/kristylee-38.jpg" }
     it { subject[:thumb][:uid].must_equal "ds3661339/kristylee-38.jpg" }
@@ -23,6 +24,15 @@ class MetadataTest < MiniTest::Spec
   describe "nil" do
     subject { Paperdragon::Metadata.new(nil) }
 
+    it { subject.populated?.must_equal false }
+    it { subject[:page].must_equal({}) }
+    it { subject[:page][:width].must_equal nil }
+  end
+
+  describe "empty hash" do
+    subject { Paperdragon::Metadata.new({}) }
+
+    it { subject.populated?.must_equal false }
     it { subject[:page].must_equal({}) }
     it { subject[:page][:width].must_equal nil }
   end

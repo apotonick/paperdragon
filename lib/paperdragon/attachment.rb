@@ -15,7 +15,7 @@ module Paperdragon
 
     module InstanceMethods
       def initialize(metadata, options={})
-        @metadata = Metadata.new(@stored = metadata)
+        @metadata = Metadata.new(metadata)
         @options  = options # to be used in #(re)build_uid for your convenience. # DISCUSS: we pass in the model here - is that what we want?
       end
 
@@ -37,7 +37,7 @@ module Paperdragon
 
       def exists? # should be #uploaded? or #stored?
         # not sure if i like that kind of state here, so consider method semi-public.
-        !! @stored
+        @metadata.populated?
       end
 
     private

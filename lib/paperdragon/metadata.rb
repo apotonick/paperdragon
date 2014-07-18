@@ -9,5 +9,9 @@ module Paperdragon
     def [](name)
       @hash[name] || {}
     end
+
+    def populated?
+      @hash.size > 0
+    end
   end
 end
