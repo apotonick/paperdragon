@@ -40,7 +40,7 @@ class PaperdragonFileTest < MiniTest::Spec
     it do
       metadata = file.process!(logo)
 
-      metadata.must_equal({:width=>216, :height=>63, :uid=>uid, :content_type=>"image/png", :size=>9632})
+      metadata.must_equal({:width=>216, :height=>63, :uid=>uid, :content_type=>"image/png"})
       exists?(uid).must_equal true
     end
 
@@ -51,14 +51,14 @@ class PaperdragonFileTest < MiniTest::Spec
         job.thumb!("16x16")
       end
 
-      file.data.size.must_equal 457 # smaller after thumb!
+      assert file.data.size <= 457 # smaller after thumb!
     end
 
     # additional metadata
     it do
       file.process!(logo, :cropping => "16x16") do |job|
         job.thumb!("16x16")
-      end.must_equal({:width=>16, :height=>5, :uid=>uid, :content_type=>"image/png", :size=>457, :cropping=>"16x16"})
+      end.must_equal({:width=>16, :height=>5, :uid=>uid, :content_type=>"image/png", :cropping=>"16x16"})
     end
   end
 
@@ -94,7 +94,7 @@ class PaperdragonFileTest < MiniTest::Spec
       metadata = file.reprocess!(original, new_uid)
 
       # it
-      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream", :size=>9632})
+      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream"})
       # it
       exists?(uid).must_equal false # deleted
       exists?(new_uid).must_equal true
@@ -106,7 +106,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
       end
 
-      file.data.size.must_equal 457
+      assert file.data.size <= 457
     end
   end
 

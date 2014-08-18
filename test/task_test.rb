@@ -20,7 +20,7 @@ class TaskSpec < MiniTest::Spec
       subject.process!(:original)
       subject.process!(:thumb) { |j| j.thumb!("16x16") }
 
-      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original", :content_type=>"image/png", :size=>9632}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb", :content_type=>"image/png", :size=>457}})
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original", :content_type=>"image/png"}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb", :content_type=>"image/png"}})
     end
 
     it do
@@ -45,7 +45,7 @@ class TaskSpec < MiniTest::Spec
       subject.reprocess!(:thumb,    original, "/2/thumb") { |j| j.thumb!("16x16") }
 
       # it
-      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original-/2/original", :content_type=>"application/octet-stream", :size=>9632}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb-/2/thumb", :content_type=>"application/octet-stream", :size=>457}})
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original-/2/original", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb-/2/thumb", :content_type=>"application/octet-stream"}})
       # it
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
@@ -57,7 +57,7 @@ class TaskSpec < MiniTest::Spec
     before do
       attachment = Paperdragon::Attachment.new(nil)
       @upload_task = attachment.task(logo)
-      @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png", :size=>9632}})
+      @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png"}})
 
       # raise attachment[:original].url # /paperdragon/uid/original
       # .uid uid/original
@@ -72,7 +72,7 @@ class TaskSpec < MiniTest::Spec
       task = attachment.task
       task.rename!(:original, "new") { |uid, new_uid|
         File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid)
-      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original-new", :content_type=>"image/png", :size=>9632}})
+      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original-new", :content_type=>"image/png"}})
     end
   end
 end
