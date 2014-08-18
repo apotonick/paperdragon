@@ -7,7 +7,7 @@ class TaskSpec < MiniTest::Spec
     self.file_class= File
 
   private
-    def uid_from(style)
+    def uid_from(style, file)
       "/uid/#{style}"
     end
   end

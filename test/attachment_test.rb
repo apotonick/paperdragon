@@ -36,7 +36,7 @@ class AttachmentSpec < MiniTest::Spec
   # test passing options into Attachment and use that in #build_uid.
   class AttachmentUsingOptions < Paperdragon::Attachment
   private
-    def build_uid(style)
+    def build_uid(style, file)
       "uid/#{style}/#{options[:filename]}"
     end
   end
@@ -68,7 +68,7 @@ end
 class AttachmentModelSpec < MiniTest::Spec
   class Attachment < Paperdragon::Attachment
   private
-    def build_uid(style)
+    def build_uid(style, file)
       "#{options[:model].class}/uid/#{style}/#{options[:filename]}"
     end
   end

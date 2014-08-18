@@ -19,10 +19,10 @@ module Paperdragon
         @options  = options # to be used in #(re)build_uid for your convenience. # DISCUSS: we pass in the model here - is that what we want?
       end
 
-      def [](style)
+      def [](style, file=nil)
         file_metadata = @metadata[style]
 
-        uid = file_metadata[:uid] || uid_from(style)
+        uid = file_metadata[:uid] || uid_from(style, file)
         self.class.file_class.new(uid, file_metadata)
       end
 
@@ -48,7 +48,7 @@ module Paperdragon
         build_uid(*args)
       end
 
-      def build_uid(style)
+      def build_uid(style, file)
         "uid/#{style}"
       end
     end

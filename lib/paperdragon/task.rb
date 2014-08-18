@@ -33,7 +33,7 @@ module Paperdragon
 
   private
     def file(style)
-      @attachment[style]
+      @attachment[style, @upload]
     end
 
     def upload
