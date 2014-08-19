@@ -5,6 +5,8 @@ module Paperdragon
       @attachment = attachment
       @upload       = upload
       @metadata   = {}
+
+      yield self if block_given?
     end
 
     attr_reader :metadata

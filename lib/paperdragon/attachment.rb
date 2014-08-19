@@ -26,8 +26,13 @@ module Paperdragon
         self.class.file_class.new(uid, file_metadata)
       end
 
-      def task(upload=nil)
-        Task.new(self, upload)
+      # DSL method providing the task instance.
+      # When called with block, it yields the task and returns the generated metadata.
+      def task(upload=nil, &block)
+        task = Task.new(self, upload, &block)
+
+        return task unless block_given?
+        task.metadata
       end
 
       # def rebuild_uid(style, old_uid, *args)

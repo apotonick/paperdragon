@@ -8,6 +8,19 @@ class TaskSpec < MiniTest::Spec
   end
 
   let (:logo) { Pathname("test/fixtures/apotomo.png") }
+
+
+  # #task allows block and returns metadata.
+  describe "#task" do
+    it do
+      Attachment.new(nil).task(logo) do |t|
+        t.process!(:original)
+        t.process!(:thumb) { |j| j.thumb!("16x16") }
+      end.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png", :content_type=>"image/png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png", :content_type=>"image/png"}})
+    end
+  end
+
+  # task without block
   let (:subject) { Attachment.new(nil).task(logo) }
 
   describe "#process!" do
