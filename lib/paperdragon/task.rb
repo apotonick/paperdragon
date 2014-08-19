@@ -14,7 +14,7 @@ module Paperdragon
     #   metadata = version.process!(upload, &block)
     #   merge! {style => metadata}
     def process!(style, &block)
-      @metadata.merge!(style => file(style).process!(upload, &block))
+      @metadata.merge!(style => file(style, upload).process!(upload, &block))
     end
 
     def reprocess!(style, original, fingerprint, &block)
@@ -32,8 +32,8 @@ module Paperdragon
     end
 
   private
-    def file(style)
-      @attachment[style, @upload]
+    def file(style, upload=nil)
+      @attachment[style, upload]
     end
 
     def upload

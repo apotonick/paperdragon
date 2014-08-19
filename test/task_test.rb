@@ -5,11 +5,6 @@ class TaskSpec < MiniTest::Spec
     class File < Paperdragon::File
     end
     self.file_class= File
-
-  private
-    def uid_from(style, file)
-      "/uid/#{style}"
-    end
   end
 
   let (:logo) { Pathname("test/fixtures/apotomo.png") }
@@ -20,7 +15,7 @@ class TaskSpec < MiniTest::Spec
       subject.process!(:original)
       subject.process!(:thumb) { |j| j.thumb!("16x16") }
 
-      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original", :content_type=>"image/png"}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb", :content_type=>"image/png"}})
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png", :content_type=>"image/png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png", :content_type=>"image/png"}})
     end
 
     it do
@@ -39,13 +34,16 @@ class TaskSpec < MiniTest::Spec
       exists?(original.uid).must_equal true
     end
 
-    let (:subject) { Attachment.new(nil).task }
+    let (:subject) { Attachment.new({
+      :original=>{:uid=>"original/pic"}, :thumb=>{:uid=>"original/pic"}}).task
+    }
+
     it do
       subject.reprocess!(:original, original, "/2/original")
       subject.reprocess!(:thumb,    original, "/2/thumb") { |j| j.thumb!("16x16") }
 
       # it
-      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"/uid/original-/2/original", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"/uid/thumb-/2/thumb", :content_type=>"application/octet-stream"}})
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-/2/original", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/pic-/2/thumb", :content_type=>"application/octet-stream"}})
       # it
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
@@ -57,10 +55,10 @@ class TaskSpec < MiniTest::Spec
     before do
       attachment = Paperdragon::Attachment.new(nil)
       @upload_task = attachment.task(logo)
-      @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png"}})
+      metadata = @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png", :content_type=>"image/png"}})
 
-      # raise attachment[:original].url # /paperdragon/uid/original
-      # .uid uid/original
+      # we do not update the attachment from task.
+      attachment = Paperdragon::Attachment.new(@upload_task.metadata)
       exists?(attachment[:original].uid).must_equal true
     end
 
@@ -72,7 +70,7 @@ class TaskSpec < MiniTest::Spec
       task = attachment.task
       task.rename!(:original, "new") { |uid, new_uid|
         File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid)
-      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"uid/original-new", :content_type=>"image/png"}})
+      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png-new", :content_type=>"image/png"}})
     end
   end
 end

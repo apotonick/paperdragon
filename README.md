@@ -59,3 +59,13 @@ it { pic.image(:original).should == "/system/test/pics/images/002/216/376/bc7b26
             got: "system/test/pics/images/002/216/376/bc7b26d983db8ced792e38f0c34aba417f75c2e7_key/original/DSC_4876.jpg" (using ==)
 
 Feel like a hacker reverse-engineering
+
+## Rails
+
+Dragonfly.app.configure do
+  plugin :imagemagick
+
+  datastore :file,
+    :server_root => 'public',
+    :root_path => 'public/images'
+end

@@ -19,7 +19,7 @@ module Paperdragon
         @options  = options # to be used in #(re)build_uid for your convenience. # DISCUSS: we pass in the model here - is that what we want?
       end
 
-      def [](style, file=nil)
+      def [](style, file=nil) # not sure if i like passing file here, consider this method signature semi-public.
         file_metadata = @metadata[style]
 
         uid = file_metadata[:uid] || uid_from(style, file)
@@ -49,7 +49,8 @@ module Paperdragon
       end
 
       def build_uid(style, file)
-        "uid/#{style}"
+        # can we use Dragonfly's API here?
+        "#{style}-#{Dragonfly::TempObject.new(file).original_filename}"
       end
     end
 

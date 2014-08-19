@@ -55,7 +55,7 @@ class AttachmentSpec < MiniTest::Spec
     self.file_class= File
   end
 
-  it { OverridingAttachment.new(nil)[:original].uid.must_equal "from/file" }
+  it { OverridingAttachment.new(nil)[:original, Pathname.new("not-considered.JPEG")].uid.must_equal "from/file" }
 
 
   # test UID sanitising. this happens only when computing the UID with a new attachment!
