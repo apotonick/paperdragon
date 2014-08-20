@@ -5,7 +5,7 @@ module Paperdragon
     end
 
     module ClassMethods
-      def processable(name, attachment_class)
+      def processable(name, attachment_class=Attachment)
         include attachment_accessor_for(name, attachment_class)
       end
 
