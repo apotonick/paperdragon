@@ -19,7 +19,8 @@ module Paperdragon
       @metadata.merge!(style => file(style, upload).process!(upload, &block))
     end
 
-    def reprocess!(style, original, fingerprint, &block)
+    # fingerprint optional => filename is gonna remain the same
+    def reprocess!(style, original, fingerprint=nil, &block)
       version = file(style)
       new_uid = @attachment.rebuild_uid(version, fingerprint)
 

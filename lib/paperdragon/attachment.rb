@@ -35,8 +35,8 @@ module Paperdragon
         task.metadata
       end
 
-      # def rebuild_uid(style, old_uid, *args)
-      def rebuild_uid(file, fingerprint)
+      def rebuild_uid(file, fingerprint=nil) # the signature of this method is to be considered semi-private.
+        return file.uid unless fingerprint
         "#{file.uid}-#{fingerprint}"
       end
 

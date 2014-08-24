@@ -48,19 +48,33 @@ class TaskSpec < MiniTest::Spec
     end
 
     let (:subject) { Attachment.new({
-      :original=>{:uid=>"original/pic"}, :thumb=>{:uid=>"original/pic"}}).task
+      :original=>{:uid=>"original/pic"}, :thumb=>{:uid=>"original/thumb"}}).task
     }
 
+    # FIXME: fingerprint should be added before .png suffix, idiot!
     it do
       subject.reprocess!(:original, original, "/2/original")
       subject.reprocess!(:thumb,    original, "/2/thumb") { |j| j.thumb!("16x16") }
 
       # it
-      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-/2/original", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/pic-/2/thumb", :content_type=>"application/octet-stream"}})
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-/2/original", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-/2/thumb", :content_type=>"application/octet-stream"}})
       # it
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
     end
+
+    # don't pass in fingerprint
+    it do
+      subject.reprocess!(:original, original)
+      subject.reprocess!(:thumb, original) { |j| j.thumb!("16x16") }
+      subject.metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb", :content_type=>"application/octet-stream"}})
+    end
+
+    # don't pass in original
+
+    # only process one, should return entire metadata hash
+
+    # octet filetype?
   end
 
 
