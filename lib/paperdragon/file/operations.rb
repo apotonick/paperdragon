@@ -25,7 +25,7 @@ module Paperdragon
 
 
     module Reprocess
-      def reprocess!(original, fingerprint, metadata={})
+      def reprocess!(fingerprint, original, metadata={})
         job = Dragonfly.app.new_job(original.data) # inheritance here somehow?
 
         yield job if block_given?

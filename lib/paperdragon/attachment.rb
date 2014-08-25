@@ -18,6 +18,7 @@ module Paperdragon
         @metadata = Metadata.new(metadata)
         @options  = options # to be used in #(re)build_uid for your convenience. # DISCUSS: we pass in the model here - is that what we want?
       end
+      attr_reader :metadata # TODO: test me.
 
       def [](style, file=nil) # not sure if i like passing file here, consider this method signature semi-public.
         file_metadata = @metadata[style]
@@ -32,7 +33,7 @@ module Paperdragon
         task = Task.new(self, upload, &block)
 
         return task unless block_given?
-        task.metadata
+        task.metadata_hash
       end
 
       def rebuild_uid(file, fingerprint=nil) # the signature of this method is to be considered semi-private.

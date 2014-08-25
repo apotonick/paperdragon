@@ -91,7 +91,7 @@ class PaperdragonFileTest < MiniTest::Spec
     end
 
     it do
-      metadata = file.reprocess!(original, new_uid)
+      metadata = file.reprocess!(new_uid, original)
 
       # it
       metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream"})
@@ -101,7 +101,7 @@ class PaperdragonFileTest < MiniTest::Spec
     end
 
     it do
-      job = file.reprocess!(original, new_uid) do |j|
+      job = file.reprocess!(new_uid, original) do |j|
         j.thumb!("16x16")
 
       end

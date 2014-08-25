@@ -32,6 +32,9 @@ class AttachmentSpec < MiniTest::Spec
     it { subject.exists?.must_equal false }
   end
 
+  # #metadata
+  it { Attachment.new({}).metadata.to_hash.must_equal( {}) }
+
 
   # test passing options into Attachment and use that in #build_uid.
   class AttachmentUsingOptions < Paperdragon::Attachment

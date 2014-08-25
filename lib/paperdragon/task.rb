@@ -3,13 +3,16 @@ module Paperdragon
   class Task
     def initialize(attachment, upload=nil)
       @attachment = attachment
-      @upload       = upload
-      @metadata   = {}
+      @upload     = upload
+      @metadata   = attachment.metadata.dup
 
       yield self if block_given?
     end
 
     attr_reader :metadata
+    def metadata_hash # semi-private, might be removed.
+      metadata.to_hash
+    end
 
     # process!(style, [*args,] &block) :
     #   version = CoverGirl::Photo.new(@model, style, *args)
@@ -20,11 +23,13 @@ module Paperdragon
     end
 
     # fingerprint optional => filename is gonna remain the same
-    def reprocess!(style, original, fingerprint=nil, &block)
-      version = file(style)
-      new_uid = @attachment.rebuild_uid(version, fingerprint)
+    # original nil => use [:original]
+    def reprocess!(style, fingerprint=nil, original=nil, &block)
+      original ||= file(:original)
+      version    = file(style)
+      new_uid    = @attachment.rebuild_uid(version, fingerprint)
 
-      @metadata.merge!(style => version.reprocess!(original, new_uid, &block))
+      @metadata.merge!(style => version.reprocess!(new_uid, original, &block))
     end
 
     def rename!(style, fingerprint, &block)

@@ -36,4 +36,19 @@ class MetadataTest < MiniTest::Spec
     it { subject[:page].must_equal({}) }
     it { subject[:page][:width].must_equal nil }
   end
+
+  let (:original) { {:original => {}} }
+
+  # #dup
+  # don't change original hash.
+  it do
+    Paperdragon::Metadata.new(original).dup.merge!(:additional => {})
+    original[:additional].must_equal nil
+  end
+
+  # #merge!
+  it { Paperdragon::Metadata.new(original).merge!(:additional => {}).to_hash.must_equal({:original=>{}, :additional=>{}}) }
+
+  # #to_hash
+  it { Paperdragon::Metadata.new(original).to_hash.must_equal({:original=>{}}) }
 end
