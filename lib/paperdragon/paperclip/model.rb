@@ -31,8 +31,8 @@ module Paperdragon
           @attachment[style].url # Avatar::Photo.new(avatar, :thumb).url
         end
 
-        def method_missing(name, *args)
-          @attachment.send(name, *args)
+        def method_missing(name, *args, &block)
+          @attachment.send(name, *args, &block)
         end
       end
     end
