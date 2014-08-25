@@ -37,7 +37,7 @@ module Paperdragon
       end
 
       # Per default, paperdragon tries to increment the fingerprint in the file name, identified by
-      # the pattern /-(\d{10})$/ just before the filename extension (.png).
+      # the pattern <tt>/-\d{10}/</tt> just before the filename extension (.png).
       def rebuild_uid(file, fingerprint=nil) # the signature of this method is to be considered semi-private.
         ext  = ::File.extname(file.uid)
         name = ::File.basename(file.uid, ext)
