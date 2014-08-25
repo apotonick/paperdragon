@@ -40,7 +40,7 @@ class PaperdragonFileTest < MiniTest::Spec
     it do
       metadata = file.process!(logo)
 
-      metadata.must_equal({:width=>216, :height=>63, :uid=>uid, :content_type=>"image/png"})
+      metadata.must_equal({:width=>216, :height=>63, :uid=>uid})
       exists?(uid).must_equal true
     end
 
@@ -58,7 +58,7 @@ class PaperdragonFileTest < MiniTest::Spec
     it do
       file.process!(logo, :cropping => "16x16") do |job|
         job.thumb!("16x16")
-      end.must_equal({:width=>16, :height=>5, :uid=>uid, :content_type=>"image/png", :cropping=>"16x16"})
+      end.must_equal({:width=>16, :height=>5, :uid=>uid, :cropping=>"16x16"})
     end
   end
 
@@ -94,7 +94,7 @@ class PaperdragonFileTest < MiniTest::Spec
       metadata = file.reprocess!(new_uid, original)
 
       # it
-      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid, :content_type=>"application/octet-stream"})
+      metadata.must_equal({:width=>216, :height=>63, :uid=>new_uid})
       # it
       exists?(uid).must_equal false # deleted
       exists?(new_uid).must_equal true

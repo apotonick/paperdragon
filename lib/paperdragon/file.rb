@@ -36,7 +36,7 @@ module Paperdragon
 
     # Override if you want to include/exclude properties in this file metadata.
     def default_metadata_for(job)
-      {:width => job.width, :height => job.height, :uid => uid, :content_type => job.mime_type}
+      {:width => job.width, :height => job.height, :uid => uid}#, :content_type => job.mime_type}
     end
 
     def metadata_for(job, additional={})

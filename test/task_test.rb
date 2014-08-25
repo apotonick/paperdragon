@@ -16,7 +16,7 @@ class TaskSpec < MiniTest::Spec
       Attachment.new(nil).task(logo) do |t|
         t.process!(:original)
         t.process!(:thumb) { |j| j.thumb!("16x16") }
-      end.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png", :content_type=>"image/png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png", :content_type=>"image/png"}})
+      end.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png"}})
     end
   end
 
@@ -28,7 +28,7 @@ class TaskSpec < MiniTest::Spec
       subject.process!(:original)
       subject.process!(:thumb) { |j| j.thumb!("16x16") }
 
-      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png", :content_type=>"image/png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png", :content_type=>"image/png"}})
+      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png"}})
     end
 
     it do
@@ -57,7 +57,7 @@ class TaskSpec < MiniTest::Spec
       subject.reprocess!(:thumb,    "-1",    original) { |j| j.thumb!("16x16") }
 
       # it
-      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-1.jpg", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-1.jpg", :content_type=>"application/octet-stream"}})
+      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-1.jpg"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-1.jpg"}})
       # it
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
@@ -66,13 +66,13 @@ class TaskSpec < MiniTest::Spec
     # don't pass in fingerprint+original.
     it do
       subject.reprocess!(:thumb) { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb.jpg", :content_type=>"application/octet-stream"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb.jpg"}})
     end
 
     # only process one, should return entire metadata hash
     it do
       subject.reprocess!(:thumb, "-new") { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg", :content_type=>"application/octet-stream"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg"}})
 
       # original must be unchanged
     end
@@ -85,7 +85,7 @@ class TaskSpec < MiniTest::Spec
     before do
       attachment = Paperdragon::Attachment.new(nil)
       @upload_task = attachment.task(logo)
-      metadata = @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png", :content_type=>"image/png"}})
+      metadata = @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}})
 
       # we do not update the attachment from task.
       attachment = Paperdragon::Attachment.new(@upload_task.metadata)
@@ -96,11 +96,11 @@ class TaskSpec < MiniTest::Spec
 
     # let (:subject) { Attachment.new(nil).task }
     it do
-      attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png", :size=>9632}}
+      attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :size=>9632}}
       task = attachment.task
       task.rename!(:original, "-new") { |uid, new_uid|
         File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid)
-      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo-new.png", :content_type=>"image/png"}})
+      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo-new.png"}})
     end
   end
 end
