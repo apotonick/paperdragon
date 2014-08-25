@@ -75,9 +75,8 @@ class TaskSpec < MiniTest::Spec
       subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg"}})
 
       # original must be unchanged
+      exists?(Attachment.new(subject.metadata_hash)[:original].uid).must_equal true
     end
-
-    # octet filetype?
   end
 
 
