@@ -40,7 +40,7 @@ class TaskSpec < MiniTest::Spec
 
 
   describe "#reprocess!" do
-    let (:original) { Paperdragon::File.new("original/pic") }
+    let (:original) { Paperdragon::File.new("original/pic.jpg") }
 
     before do
       original.process!(logo) # original/uid exists.
@@ -48,16 +48,16 @@ class TaskSpec < MiniTest::Spec
     end
 
     subject { Attachment.new({
-      :original=>{:uid=>"original/pic"}, :thumb=>{:uid=>"original/thumb"}}).task
+      :original=>{:uid=>"original/pic.jpg"}, :thumb=>{:uid=>"original/thumb.jpg"}}).task
     }
 
     # FIXME: fingerprint should be added before .png suffix, idiot!
     it do
-      subject.reprocess!(:original, "/2/original", original)
-      subject.reprocess!(:thumb,    "/2/thumb",    original) { |j| j.thumb!("16x16") }
+      subject.reprocess!(:original, "-1", original)
+      subject.reprocess!(:thumb,    "-1",    original) { |j| j.thumb!("16x16") }
 
       # it
-      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-/2/original", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-/2/thumb", :content_type=>"application/octet-stream"}})
+      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-1.jpg", :content_type=>"application/octet-stream"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-1.jpg", :content_type=>"application/octet-stream"}})
       # it
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
@@ -66,13 +66,13 @@ class TaskSpec < MiniTest::Spec
     # don't pass in fingerprint+original.
     it do
       subject.reprocess!(:thumb) { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb", :content_type=>"application/octet-stream"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb.jpg", :content_type=>"application/octet-stream"}})
     end
 
     # only process one, should return entire metadata hash
     it do
       subject.reprocess!(:thumb, "-new") { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb--new", :content_type=>"application/octet-stream"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg", :content_type=>"application/octet-stream"}})
 
       # original must be unchanged
     end
@@ -98,9 +98,9 @@ class TaskSpec < MiniTest::Spec
     it do
       attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :content_type=>"image/png", :size=>9632}}
       task = attachment.task
-      task.rename!(:original, "new") { |uid, new_uid|
+      task.rename!(:original, "-new") { |uid, new_uid|
         File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid)
-      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png-new", :content_type=>"image/png"}})
+      }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo-new.png", :content_type=>"image/png"}})
     end
   end
 end

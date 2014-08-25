@@ -37,8 +37,9 @@ module Paperdragon
       end
 
       def rebuild_uid(file, fingerprint=nil) # the signature of this method is to be considered semi-private.
-        return file.uid unless fingerprint
-        "#{file.uid}-#{fingerprint}"
+        ext  = ::File.extname(file.uid)
+        name = ::File.basename(file.uid, ext)
+        file.uid.sub(name, "#{name}#{fingerprint}")
       end
 
       def exists? # should be #uploaded? or #stored?

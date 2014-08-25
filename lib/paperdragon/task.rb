@@ -4,7 +4,7 @@ module Paperdragon
     def initialize(attachment, upload=nil)
       @attachment = attachment
       @upload     = upload
-      @metadata   = attachment.metadata.dup
+      @metadata   = attachment.metadata.dup # DISCUSS: keep this dependency?
 
       yield self if block_given?
     end
