@@ -51,14 +51,13 @@ class TaskSpec < MiniTest::Spec
       :original=>{:uid=>"original/pic.jpg"}, :thumb=>{:uid=>"original/thumb.jpg"}}).task
     }
 
-    # FIXME: fingerprint should be added before .png suffix, idiot!
     it do
-      subject.reprocess!(:original, "-1", original)
-      subject.reprocess!(:thumb,    "-1",    original) { |j| j.thumb!("16x16") }
+      subject.reprocess!(:original, "1", original)
+      subject.reprocess!(:thumb,    "1",    original) { |j| j.thumb!("16x16") }
 
-      # it
+      # FIXME: fingerprint should be added before .png suffix.
       subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-1.jpg"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-1.jpg"}})
-      # it
+
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
     end
@@ -66,17 +65,32 @@ class TaskSpec < MiniTest::Spec
     # don't pass in fingerprint+original.
     it do
       subject.reprocess!(:thumb) { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb.jpg"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-.jpg"}})
     end
 
     # only process one, should return entire metadata hash
     it do
-      subject.reprocess!(:thumb, "-new") { |j| j.thumb!("24x24") }
+      subject.reprocess!(:thumb, "new") { |j| j.thumb!("24x24") }
       subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg"}})
 
       # original must be unchanged
       exists?(Attachment.new(subject.metadata_hash)[:original].uid).must_equal true
     end
+
+    # #rebuild_uid tries to replace existing fingerprint (default behaviour).
+    it do
+      subject.reprocess!(:thumb, "1234567890") { |j| j.thumb!("24x24") }
+      metadata = subject.metadata_hash
+      metadata.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1234567890.jpg"}})
+
+      # this might happen in the next request.
+      subject = Attachment.new(metadata).task
+      subject.reprocess!(:thumb, "0987654321") { |j| j.thumb!("24x24") }
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-0987654321.jpg"}})
+    end
+
+    # #rebuild_uid eats integers.
+    it { subject.reprocess!(:thumb, 1234081599) { |j| j.thumb!("24x24") }.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1234081599.jpg"}}) }
   end
 
 
@@ -97,7 +111,7 @@ class TaskSpec < MiniTest::Spec
     it do
       attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :size=>9632}}
       task = attachment.task
-      task.rename!(:original, "-new") { |uid, new_uid|
+      task.rename!(:original, "new") { |uid, new_uid|
         File.rename("public/paperdragon/"+uid, "public/paperdragon/"+new_uid)
       }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo-new.png"}})
     end

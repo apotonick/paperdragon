@@ -36,10 +36,17 @@ module Paperdragon
         task.metadata_hash
       end
 
+      # Per default, paperdragon tries to increment the fingerprint in the file name, identified by
+      # the pattern /-(\d{10})$/ just before the filename extension (.png).
       def rebuild_uid(file, fingerprint=nil) # the signature of this method is to be considered semi-private.
         ext  = ::File.extname(file.uid)
         name = ::File.basename(file.uid, ext)
-        file.uid.sub(name, "#{name}#{fingerprint}")
+
+        if fingerprint and matches = name.match(/-(\d{10})$/)
+          return file.uid.sub(matches[1], fingerprint.to_s)
+        end
+
+        file.uid.sub(name, "#{name}-#{fingerprint}")
       end
 
       def exists? # should be #uploaded? or #stored?
