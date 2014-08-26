@@ -25,11 +25,11 @@ module Paperdragon
     # fingerprint optional => filename is gonna remain the same
     # original nil => use [:original]
     def reprocess!(style, fingerprint=nil, original=nil, &block)
-      original ||= file(:original) # FIXME: cache that original!
-      version    = file(style)
-      new_uid    = @attachment.rebuild_uid(version, fingerprint)
+      @original ||= file(:original) # this is cached per task instance.
+      version     = file(style)
+      new_uid     = @attachment.rebuild_uid(version, fingerprint)
 
-      @metadata.merge!(style => version.reprocess!(new_uid, original, &block))
+      @metadata.merge!(style => version.reprocess!(new_uid, @original, &block))
     end
 
     def rename!(style, fingerprint, &block)

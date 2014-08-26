@@ -48,7 +48,7 @@ class TaskSpec < MiniTest::Spec
     end
 
     subject { Attachment.new({
-      :original=>{:uid=>"original/pic.jpg"}, :thumb=>{:uid=>"original/thumb.jpg"}}).task
+      :original=>{:uid=>"original/pic.jpg"}, :thumb=>{:uid=>"original/thumb.jpg"}, :bigger=>{:uid=>"original/bigger.jpg"}}).task
     }
 
     it do
@@ -56,7 +56,7 @@ class TaskSpec < MiniTest::Spec
       subject.reprocess!(:thumb,    "1",    original) { |j| j.thumb!("16x16") }
 
       # FIXME: fingerprint should be added before .png suffix.
-      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-1.jpg"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-1.jpg"}})
+      subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original/pic-1.jpg"}, :thumb=>{:width=>16, :height=>5, :uid=>"original/thumb-1.jpg"}, :bigger=>{:uid=>"original/bigger.jpg"}})
 
       # exists?(original.uri).must_equal false # deleted
       # exists?(new_uid).must_equal true
@@ -65,13 +65,25 @@ class TaskSpec < MiniTest::Spec
     # don't pass in fingerprint+original.
     it do
       subject.reprocess!(:thumb) { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-.jpg"}})
+      subject.reprocess!(:bigger) { |j| j.thumb!("48x48") }
+
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-.jpg"}, :bigger=>{:uid=>"original/bigger-.jpg", :width=>48, :height=>14}})
+    end
+
+    # don't pass in original, this must NOT reload the original file more than once!
+    it do
+      subject.reprocess!(:thumb, 1) { |j| j.thumb!("24x24") }
+      File.unlink("public/paperdragon/#{original.uid}") # removing means the original MUST be cached for next step.
+      subject.reprocess!(:bigger, 1) { |j| j.thumb!("48x48") }
+
+      subject.metadata_hash.must_equal(
+        {:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1.jpg"}, :bigger=>{:uid=>"original/bigger-1.jpg", :width=>48, :height=>14}})
     end
 
     # only process one, should return entire metadata hash
     it do
       subject.reprocess!(:thumb, "new") { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-new.jpg"}, :bigger=>{:uid=>"original/bigger.jpg"}})
 
       # original must be unchanged
       exists?(Attachment.new(subject.metadata_hash)[:original].uid).must_equal true
@@ -81,16 +93,16 @@ class TaskSpec < MiniTest::Spec
     it do
       subject.reprocess!(:thumb, "1234567890") { |j| j.thumb!("24x24") }
       metadata = subject.metadata_hash
-      metadata.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1234567890.jpg"}})
+      metadata.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1234567890.jpg"}, :bigger=>{:uid=>"original/bigger.jpg"}})
 
       # this might happen in the next request.
       subject = Attachment.new(metadata).task
       subject.reprocess!(:thumb, "0987654321") { |j| j.thumb!("24x24") }
-      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-0987654321.jpg"}})
+      subject.metadata_hash.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-0987654321.jpg"}, :bigger=>{:uid=>"original/bigger.jpg"}})
     end
 
     # #rebuild_uid eats integers.
-    it { subject.reprocess!(:thumb, 1234081599) { |j| j.thumb!("24x24") }.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1234081599.jpg"}}) }
+    it { subject.reprocess!(:thumb, 1234081599) { |j| j.thumb!("24x24") }.must_equal({:original=>{:uid=>"original/pic.jpg"}, :thumb=>{:width=>24, :height=>7, :uid=>"original/thumb-1234081599.jpg"}, :bigger=>{:uid=>"original/bigger.jpg"}}) }
   end
 
 
