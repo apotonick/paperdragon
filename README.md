@@ -1,12 +1,105 @@
 # Paperdragon
 
-TODO: Write a gem description
+_Explicit image processing._
+
+## Summary
+
+Paperdragon gives you image processing as known from Paperclip, CarrierWave or [Dragonfly](https://github.com/markevans/dragonfly). It allows uploading, cropping, resizing, watermarking, maintaining different versions of an image, and so on.
+
+It provides a very explicit DSL: **No magic is happening behind the scenes, paperdragon makes _you_ implement the processing steps.**
+
+With only a little bit of more code you are fully in control of what gets uploaded where, which image version gets resized when and what gets sent to a background job.
+
+Paperdragon uses the excellent [Dragonfly](https://github.com/markevans/dragonfly) gem for processing, resizing, storing, etc.
+
+Paperdragon is database-agnostic, doesn't know anything about ActiveRecord and _does not_ hook into AR's callbacks.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'paperdragon'
+```ruby
+gem 'paperdragon'
+```
+
+
+## Example
+
+This README only documents the public DSL. You're free to use the public API [documented here](# TODO) if you don't like the DSL.
+
+### Model
+
+Paperdragon has only one requirement for the model: It needs to have a column `image_meta_data`. This is a serialised hash where paperdragon saves UIDs for the different image versions. We'll learn about this in a minute.
+
+```ruby
+class User < ActiveRecord::Base # this could be just anything.
+  include Paperdragon::Model
+
+  processable :image
+
+  serialize :image_meta_data
+end
+```
+
+Calling `::processable` advises paperdragon to create a `User#image` reader to the attachment. Nothing else is added to the class.
+
+
+### Uploading
+
+Processing and storing an uploaded image is an explicit step - you have to code it! This code usually goes to a separate class or an [Operation in Trailblazer](https://github.com/apotonick/trailblazer#domain-layer-operation), don't leave it in the controller if you don't have to.
+
+```ruby
+def create
+  user = User.create(params) # this is your code.
+
+  # upload code:
+  file = params[:image]
+
+  metadata = user.image.task(file) do |v|
+    v.process!(:original)                                      # save the unprocessed.
+    v.process!(:thumb)   { |job| job.thumb!("75x75#") }        # resizing.
+    v.process!(:cropped) { |job| job.thumb!("140x140+20+20") } # cropping.
+    v.process!(:public)  { |job| job.watermark! }              # watermark.
+  end
+
+  user.update_attribute(:image_meta_data, metadata)
+end
+```
+
+This is a completely transparent process.
+
+1. Calling `#task` on the image attachment will yield a task object to the block, allowing you to create different versions of the uploaded image `file`.
+2. `#process!` requires you to pass in a version name for that particular image version. It is a convention to call the unprocessed image `:original`.
+3. The `job` object is responsible for creating the final version. This is simply a `Dragonfly::Job` object and gives you [everything that can be done with dragonfly](http://markevans.github.io/dragonfly/imagemagick/).
+4. The `#task` method returns a hash of meta data that can simply be pushed into the object's `image_meta_data` column.
+
+
+### Rendering Images
+
+After processing, you may want to render those image versions in your app.
+
+```ruby
+user.image[:thumb].url
+```
+
+This is all you need to retrieve the URL/path for a stored image.
+
+Internally, Paperdragon will call `model#image_meta_data` and use this hash to find the address of the image. For a better understanding and to see how simple it is, go and check out this column/field.
+
+```ruby
+ user.image_meta_data #=> {original: {uid: "original-logo.jpg", width: 240, height: 800},
+                      #    thumb:    {uid: "thumb-logo.jpg", width: 48, height: 48},
+                      #   ..and so on..
+                      #   }
+ ```
+
+While Paperclip uses several fields of the model to compute UIDs (addresses) at run-time, paperdragon does that once and then dumps then to the database. This completely removes the dependency to the model.
+
+Reprocessing
+Fingerprints
+Configuration
+S3
+
 
 
 Paperdragon is completely decoupled from ActiveRecord. Attachment-related calls are delegated to paperdragon objects, the model is solely used for persisting file UIDs.
