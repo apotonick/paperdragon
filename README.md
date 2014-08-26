@@ -44,37 +44,46 @@ end
 Calling `::processable` advises paperdragon to create a `User#image` reader to the attachment. Nothing else is added to the class.
 
 
-### Uploading
+## Uploading
 
 Processing and storing an uploaded image is an explicit step - you have to code it! This code usually goes to a separate class or an [Operation in Trailblazer](https://github.com/apotonick/trailblazer#domain-layer-operation), don't leave it in the controller if you don't have to.
 
 ```ruby
 def create
+  file = params.delete(:image)
+
   user = User.create(params) # this is your code.
 
   # upload code:
-  file = params[:image]
-
-  metadata = user.image.task(file) do |v|
+  user.image(file) do |v|
     v.process!(:original)                                      # save the unprocessed.
     v.process!(:thumb)   { |job| job.thumb!("75x75#") }        # resizing.
     v.process!(:cropped) { |job| job.thumb!("140x140+20+20") } # cropping.
     v.process!(:public)  { |job| job.watermark! }              # watermark.
   end
 
-  user.update_attribute(:image_meta_data, metadata)
+  user.save
 end
 ```
 
 This is a completely transparent process.
 
-1. Calling `#task` on the image attachment will yield a task object to the block, allowing you to create different versions of the uploaded image `file`.
-2. `#process!` requires you to pass in a version name for that particular image version. It is a convention to call the unprocessed image `:original`.
+1. Calling `#image` usually returns the image attachment. However, passing a `file` to it allows to create different versions of the uploaded image in the block.
+2. `#process!` requires you to pass in a name for that particular image version. It is a convention to call the unprocessed image `:original`.
 3. The `job` object is responsible for creating the final version. This is simply a `Dragonfly::Job` object and gives you [everything that can be done with dragonfly](http://markevans.github.io/dragonfly/imagemagick/).
-4. The `#task` method returns a hash of meta data that can simply be pushed into the object's `image_meta_data` column.
+4. After the block is run, paperdragon pushes a hash with all the images meta data to the model via `model.image_meta_data=`.
+
+For a better understanding and to see how simple it is, go and check out the `image_meta_data` field.
+
+```ruby
+ user.image_meta_data #=> {original: {uid: "original-logo.jpg", width: 240, height: 800},
+                      #    thumb:    {uid: "thumb-logo.jpg", width: 48, height: 48},
+                      #   ..and so on..
+                      #   }
+ ```
 
 
-### Rendering Images
+## Rendering Images
 
 After processing, you may want to render those image versions in your app.
 
@@ -84,18 +93,15 @@ user.image[:thumb].url
 
 This is all you need to retrieve the URL/path for a stored image.
 
-Internally, Paperdragon will call `model#image_meta_data` and use this hash to find the address of the image. For a better understanding and to see how simple it is, go and check out this column/field.
+Internally, Paperdragon will call `model#image_meta_data` and use this hash to find the address of the image.
 
-```ruby
- user.image_meta_data #=> {original: {uid: "original-logo.jpg", width: 240, height: 800},
-                      #    thumb:    {uid: "thumb-logo.jpg", width: 48, height: 48},
-                      #   ..and so on..
-                      #   }
- ```
+While gems like paperclip often use several fields of the model to compute UIDs (addresses) at run-time, paperdragon does that once and then dumps it to the database. This completely removes the dependency to the model.
 
-While Paperclip uses several fields of the model to compute UIDs (addresses) at run-time, paperdragon does that once and then dumps then to the database. This completely removes the dependency to the model.
 
-Reprocessing
+## Reprocessing And Cropping
+
+
+
 Fingerprints
 Configuration
 S3
