@@ -9,7 +9,7 @@ class MetadataTest < MiniTest::Spec
       }
     }
 
-    subject { Paperdragon::Metadata.new(valid) }
+    subject { Paperdragon::Metadata[valid] }
 
     it { subject.populated?.must_equal true }
     it { subject[:original][:width].must_equal 960 }
@@ -22,7 +22,7 @@ class MetadataTest < MiniTest::Spec
 
 
   describe "nil" do
-    subject { Paperdragon::Metadata.new(nil) }
+    subject { Paperdragon::Metadata[nil] }
 
     it { subject.populated?.must_equal false }
     it { subject[:page].must_equal({}) }
@@ -30,7 +30,7 @@ class MetadataTest < MiniTest::Spec
   end
 
   describe "empty hash" do
-    subject { Paperdragon::Metadata.new({}) }
+    subject { Paperdragon::Metadata[{}] }
 
     it { subject.populated?.must_equal false }
     it { subject[:page].must_equal({}) }
@@ -42,13 +42,13 @@ class MetadataTest < MiniTest::Spec
   # #dup
   # don't change original hash.
   it do
-    Paperdragon::Metadata.new(original).dup.merge!(:additional => {})
+    Paperdragon::Metadata[original].dup.merge!(:additional => {})
     original[:additional].must_equal nil
   end
 
   # #merge!
-  it { Paperdragon::Metadata.new(original).merge!(:additional => {}).to_hash.must_equal({:original=>{}, :additional=>{}}) }
+  it { Paperdragon::Metadata[original].merge!(:additional => {}).to_hash.must_equal({:original=>{}, :additional=>{}}) }
 
   # #to_hash
-  it { Paperdragon::Metadata.new(original).to_hash.must_equal({:original=>{}}) }
+  it { Paperdragon::Metadata[original].to_hash.must_equal({:original=>{}}) }
 end

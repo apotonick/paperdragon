@@ -3,7 +3,7 @@ require 'test_helper'
 class AttachmentSpec < MiniTest::Spec
   class Attachment < Paperdragon::Attachment
   private
-    def uid_from(style)
+    def uid_from(style, file)
       "/uid/#{style}"
     end
   end
