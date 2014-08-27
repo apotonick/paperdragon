@@ -4,7 +4,7 @@ _Explicit image processing._
 
 ## Summary
 
-Paperdragon gives you image processing as known from Paperclip, CarrierWave or [Dragonfly](https://github.com/markevans/dragonfly). It allows uploading, cropping, resizing, watermarking, maintaining different versions of an image, and so on.
+Paperdragon gives you image processing as known from [Paperclip](https://github.com/thoughtbot/paperclip, [CarrierWave](https://github.com/carrierwaveuploader/carrierwave) or [Dragonfly](https://github.com/markevans/dragonfly). It allows uploading, cropping, resizing, watermarking, maintaining different versions of an image, and so on.
 
 It provides a very explicit DSL: **No magic is happening behind the scenes, paperdragon makes _you_ implement the processing steps.**
 
@@ -271,7 +271,7 @@ Dragonfly.app.configure do
 end
 ```
 
-Images will be stored "in the cloud" when using `#process!`, renaming, deleting and re-processing does the same!
+Images will be stored "in the cloud" when using `#process!`, renaming, deleting and re-processing do the same!
 
 
 ## Background Processing
@@ -282,7 +282,7 @@ The explicit design of paperdragon makes it incredibly simple to move all or cer
 class Image::Processor
   include Sidekiq::Worker
 
-  def process(params)
+  def perform(params)
     user = User.find(params[:id])
 
     user.image(params[:file]) do |v|
