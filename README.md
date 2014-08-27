@@ -4,7 +4,7 @@ _Explicit image processing._
 
 ## Summary
 
-Paperdragon gives you image processing as known from [Paperclip](https://github.com/thoughtbot/paperclip, [CarrierWave](https://github.com/carrierwaveuploader/carrierwave) or [Dragonfly](https://github.com/markevans/dragonfly). It allows uploading, cropping, resizing, watermarking, maintaining different versions of an image, and so on.
+Paperdragon gives you image processing as known from [Paperclip](https://github.com/thoughtbot/paperclip), [CarrierWave](https://github.com/carrierwaveuploader/carrierwave) or [Dragonfly](https://github.com/markevans/dragonfly). It allows uploading, cropping, resizing, watermarking, maintaining different versions of an image, and so on.
 
 It provides a very explicit DSL: **No magic is happening behind the scenes, paperdragon makes _you_ implement the processing steps.**
 
