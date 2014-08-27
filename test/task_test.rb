@@ -18,6 +18,15 @@ class TaskSpec < MiniTest::Spec
         t.process!(:thumb) { |j| j.thumb!("16x16") }
       end.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png"}})
     end
+
+    # modify metadata in task
+    it do
+      Attachment.new({:processing => true, :approved => true}).task(logo) do |t|
+        t.process!(:original)
+        t.metadata.delete(:processing)
+      end.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :approved => true})
+    end
+
   end
 
   # task without block
