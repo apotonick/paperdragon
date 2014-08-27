@@ -13,8 +13,8 @@ module Paperdragon
       # Creates Avatar#image that returns a Paperdragon::File instance.
       def attachment_accessor_for(name, attachment_class)
         mod = Module.new do # TODO: abstract that into Uber, we use it everywhere.
-          define_method name do |file=nil, &block|
-            attachment = attachment_class.new(self.image_meta_data, {:model => self})
+          define_method name do |file=nil, options={}, &block|
+            attachment = attachment_class.new(self.image_meta_data, options.merge({:model => self}))
 
             return attachment unless file or block
 
