@@ -46,9 +46,7 @@ class MetadataTest < MiniTest::Spec
     original[:additional].must_equal nil
   end
 
-  # #merge!
-  it { Paperdragon::Metadata[original].merge!(:additional => {}).to_hash.must_equal({:original=>{}, :additional=>{}}) }
-
   # #to_hash
   it { Paperdragon::Metadata[original].to_hash.must_equal({:original=>{}}) }
+  it { Paperdragon::Metadata[original].to_hash.class.must_equal(Hash) }
 end

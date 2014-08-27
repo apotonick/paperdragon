@@ -16,8 +16,9 @@ module Paperdragon
       size > 0
     end
 
+    # Consider this semi-public. This is used the make the metadata hash serialisable (as a plain hash).
     def to_hash
-      self
+      Hash[self]
     end
   end
 end
