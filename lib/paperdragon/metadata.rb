@@ -3,29 +3,21 @@ module Paperdragon
   # Metadata.new(nil)[:original][:width] => ""
   # Holds metadata for an attachment. This is a hash keyed by versions, e.g. +:original+,
   # +:thumb+, and so on.
-  class Metadata
-    def initialize(hash)
-      @hash = hash || {}
+  class Metadata < Hash
+    def self.[](hash) # allow Metadata[nil]
+      super hash || {}
     end
 
     def [](name)
-      @hash[name] || {}
+      super || {}
     end
 
     def populated?
-      @hash.size > 0
-    end
-
-    def merge!(hash)
-      @hash.merge!(hash)
-    end
-
-    def dup
-      self.class.new(@hash.dup)
+      size > 0
     end
 
     def to_hash
-      @hash
+      self
     end
   end
 end

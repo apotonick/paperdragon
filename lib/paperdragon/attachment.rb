@@ -15,7 +15,7 @@ module Paperdragon
 
     module InstanceMethods
       def initialize(metadata, options={})
-        @metadata = Metadata.new(metadata)
+        @metadata = Metadata[metadata]
         @options  = options # to be used in #(re)build_uid for your convenience. # DISCUSS: we pass in the model here - is that what we want?
       end
       attr_reader :metadata # TODO: test me.
