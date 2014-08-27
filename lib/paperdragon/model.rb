@@ -16,9 +16,10 @@ module Paperdragon
           define_method name do |file=nil, &block|
             attachment = attachment_class.new(self.image_meta_data, {:model => self})
 
-            return attachment unless file
+            return attachment unless file or block
 
-            self.image_meta_data = attachment.task(file, &block)
+            # run the task block and save the returned new metadata in the model.
+            self.image_meta_data = attachment.task(*[file], &block)
           end
         end
       end

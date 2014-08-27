@@ -105,6 +105,7 @@ While gems like paperclip often use several fields of the model to compute UIDs 
 Fingerprints
 Configuration
 S3
+Background Processing
 
 
 

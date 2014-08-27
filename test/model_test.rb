@@ -41,5 +41,12 @@ class PaperdragonModelTest < MiniTest::Spec
     end
 
     model.image_meta_data.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png"}})
+
+
+    model.image do |v|
+      v.reprocess!(:thumb, "1") { |j| j.thumb!("8x8") }
+    end
+
+    model.image_meta_data.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>8, :height=>2, :uid=>"thumb-apotomo-1.png"}})
   end
 end
