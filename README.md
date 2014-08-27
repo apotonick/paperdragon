@@ -91,7 +91,11 @@ After processing, you may want to render those image versions in your app.
 user.image[:thumb].url
 ```
 
-This is all you need to retrieve the URL/path for a stored image.
+This is all you need to retrieve the URL/path for a stored image. Use this for your image tags
+
+```haml
+= img_tag user.image[:thumb].url
+```
 
 Internally, Paperdragon will call `model#image_meta_data` and use this hash to find the address of the image.
 
@@ -100,9 +104,137 @@ While gems like paperclip often use several fields of the model to compute UIDs 
 
 ## Reprocessing And Cropping
 
+Once an image has been processed to several versions, you might need to reprocess some of them. As an example, users could re-crop their thumbs.
+
+```ruby
+def crop
+  user = User.find(params[:id]) # this is your code.
+
+  # reprocessing code:
+  cropping = "#{params[:w]}x#{params[:h]}#"
+
+  user.image do |v|
+    v.reprocess!(:thumb, Time.now) { |job| job.thumb!(cropping) } # re-crop.
+  end
+
+  user.save
+end
+```
+
+Only a few things have changed compared to the initial processing.
+
+1. We do not pass a file to `#image` anymore. This makes sense as reprocessing will re-use the existing original file.
+2. Note that it's not `#process!` but `#reprocess!` indicating a surprising reprocessing.
+3. As a second argument to `#reprocess!` a fingerprint string is required. To understand what this does, let's inspect `image_meta_data` once again. (The fingerprint feature is optional but extremely helpful.)
 
 
-Fingerprints
+```ruby
+ user.image_meta_data #   ..original..
+                      #    thumb:    {uid: "thumb-logo-1234567890.jpg", width: 48, height: 48},
+                      #   ..and so on..
+                      #   }
+```
+
+See how the file name has changed? Paperdragon will automatically append the fingerprint you pass into `#reprocess!` to the existing version's file name.
+
+
+## Renaming
+
+Sometimes you just want to rename files without processing them. For instance, when a new fingerprint for an image is introduced, you want to apply that to all versions.
+
+```ruby
+fingerprint = Time.now
+
+user.image do |v|
+  v.reprocess!(:thumb, fingerprint) { |job| job.thumb!(cropping) } # re-crop.
+  v.rename!(:original, fingerprint) # just rename it.
+end
+```
+
+This will re-crop the thumb and _rename_ the original.
+
+```ruby
+ user.image_meta_data #=> {original: {uid: "original-logo-1234567890.jpg", ..},
+                      #    thumb:    {uid: "thumb-logo-1234567890.jpg", ..},
+                      #   ..and so on..
+                      #   }
+ ```
+
+
+## Deleting
+
+While making images is a wonderful thing, sometimes you need to destroy to create. This is why paperdragon gives you a deleting mechanism, too.
+
+```ruby
+user.image do |v|
+  v.delete!(:thumb)
+end
+```
+
+This will also remove the associated metadata from the model.
+
+
+## Fingerprints
+
+Paperdragon comes with a very simple built-in file naming.
+
+Computing a file UID (or, name, or path) happens in the `Attachment` class. You need to provide your own implementation if you want to change things.
+
+```ruby
+class User < ActiveRecord::Base
+  include Paperdragon::Model
+
+  class Attachment < Paperdragon::Attachment
+    def build_uid(style, file)
+      "/path/to/#{style}/#{obfuscator}/#{file.original_filename}"
+    end
+
+    def obfuscator
+      Obfuscator.call # this is your code.
+    end
+  end
+
+  processable :image, Attachment # use the class you just wrote.
+```
+
+The `Attachment#build_uid` method is invoked when processing images.
+
+```ruby
+user.image(file) do |v|
+  v.process!(:thumb)   { |job| job.thumb!("75x75#") }
+end
+```
+
+To create the image UID, _your_ attachment is now being used.
+
+```ruby
+ user.image_meta_data #   ..original..
+                      #    thumb:    {uid: "/path/to/thumb/ac97dnxid8/logo.jpg", ..},
+                      #   ..and so on..
+                      #   }
+```
+
+What a beautiful, cryptic and mysterious filename you just created!
+
+The same pattern applies for _re-building_ UIDs when reprocessing images.
+
+```ruby
+class Attachment < Paperdragon::Attachment
+  # def build_uid and the other code from above..
+
+  def rebuild_uid(file, fingerprint)
+    file.uid.sub("logo.png", "logo-#{fingerprint".png)
+  end
+end
+```
+
+This code is used to re-compute UIDs in `#reprocess!`.
+
+That example is stupid, I know, but it shows how you have access to the `Paperdragon::File` instance that represents the existing version of the reprocessed image.
+
+
+
+
 Configuration
 S3
 Background Processing
