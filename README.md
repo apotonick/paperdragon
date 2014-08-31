@@ -77,7 +77,7 @@ For a better understanding and to see how simple it is, go and check out the `im
 
 ```ruby
  user.image_meta_data #=> {original: {uid: "original-logo.jpg", width: 240, height: 800},
-                      #    thumb:    {uid: "thumb-logo.jpg", width: 48, height: 48},
+                      #    thumb:    {uid: "thumb-logo.jpg", width: 140, height: 140},
                       #   ..and so on..
                       #   }
  ```
@@ -91,7 +91,7 @@ After processing, you may want to render those image versions in your app.
 user.image[:thumb].url
 ```
 
-This is all you need to retrieve the URL/path for a stored image. Use this for your image tags
+This is all you need to retrieve the URL/path for a stored image. Use this for your image tags.
 
 ```haml
 = img_tag user.image[:thumb].url
