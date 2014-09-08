@@ -223,7 +223,7 @@ class Attachment < Paperdragon::Attachment
   # def build_uid and the other code from above..
 
   def rebuild_uid(file, fingerprint)
-    file.uid.sub("logo.png", "logo-#{fingerprint".png)
+    file.uid.sub("logo.png", "logo-#{fingerprint}.png")
   end
 end
 ```
