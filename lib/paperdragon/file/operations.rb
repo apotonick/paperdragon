@@ -8,14 +8,20 @@ module Paperdragon
         yield job if block_given?
 
         old_uid = uid
-        uid!(new_uid) if new_uid # new UID is already computed and set.
+        uid!(new_uid) if new_uid # set new uid if this is a replace.
 
+        upload!(job, old_uid, new_uid, metadata)
+      end
+
+    private
+      # Upload file, delete old file if there is one.
+      def upload!(job, old_uid, new_uid, metadata)
         puts "........................STORE  (process): #{uid}"
         job.store(path: uid, :headers => {'x-amz-acl' => 'public-read', "Content-Type" => "image/jpeg"})
 
-        if new_uid
+        if new_uid # new uid means delete old one.
           puts "........................DELETE (reprocess): #{old_uid}"
-        Dragonfly.app.destroy(old_uid)
+          Dragonfly.app.destroy(old_uid)
         end
 
         @data = nil
@@ -41,14 +47,7 @@ module Paperdragon
         old_uid = uid
         uid!(new_uid) # new UID is already computed and set.
 
-        puts "........................STORE  (reprocess): #{uid}"
-        job.store(path: uid, headers: {'x-amz-acl' => 'public-read', "Content-Type" => "image/jpeg"}) # store with thumb url.
-
-        puts "........................DELETE (reprocess): #{old_uid}"
-        Dragonfly.app.destroy(old_uid)
-
-        @data = nil
-        metadata_for(job, metadata)
+        upload!(job, old_uid, new_uid, metadata)
       end
     end
 
