@@ -38,6 +38,12 @@ class TaskSpec < MiniTest::Spec
       subject.process!(:thumb) { |j| j.thumb!("16x16") }
 
       subject.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>16, :height=>5, :uid=>"thumb-apotomo.png"}})
+
+      puts "our tset"
+      # calling #process! with existing metadata.
+      task = Attachment.new(subject.metadata_hash).task(Pathname("test/fixtures/trb.png"))
+      task.process!(:thumb) { |j| j.thumb!("48x48") }
+      task.metadata_hash.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>48, :height=>48, :uid=>"thumb-trb.png"}})
     end
 
     it do
