@@ -19,7 +19,10 @@ module Paperdragon
     #   metadata = version.process!(upload, &block)
     #   merge! {style => metadata}
     def process!(style, &block)
-      @metadata.merge!(style => file(style, upload).process!(upload, &block))
+      version = file(style, upload)
+      new_uid = new_uid_for(style, version) # new uid when overwriting existing attachment.
+
+      @metadata.merge!(style => version.process!(upload, new_uid, &block))
     end
 
     # fingerprint optional => filename is gonna remain the same
@@ -46,6 +49,11 @@ module Paperdragon
 
     def upload
       @upload or raise MissingUploadError.new("You called #process! but didn't pass an uploaded file to Attachment#task.")
+    end
+
+    # Returns new UID for new file when overriding an existing attachment with #process!.
+    def new_uid_for(style, version)
+      @attachment.exists? ? @attachment.uid_from(style, upload) : nil # DISCUSS: move to Attachment?
     end
   end
 end

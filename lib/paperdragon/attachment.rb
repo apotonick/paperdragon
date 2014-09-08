@@ -36,6 +36,11 @@ module Paperdragon
         task.metadata_hash
       end
 
+      # Computes UID when File doesn't have one, yet. Called in #initialize.
+      def uid_from(*args)
+        build_uid(*args)
+      end
+
       # Per default, paperdragon tries to increment the fingerprint in the file name, identified by
       # the pattern <tt>/-\d{10}/</tt> just before the filename extension (.png).
       def rebuild_uid(file, fingerprint=nil) # the signature of this method is to be considered semi-private.
@@ -56,11 +61,6 @@ module Paperdragon
 
     private
       attr_reader :options
-
-      # Computes UID when File doesn't have one, yet. Called in #initialize.
-      def uid_from(*args)
-        build_uid(*args)
-      end
 
       def build_uid(style, file)
         # can we use Dragonfly's API here?

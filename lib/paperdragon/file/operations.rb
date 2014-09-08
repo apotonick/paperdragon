@@ -2,13 +2,21 @@ module Paperdragon
   class File
     # DISCUSS: allow the metadata passing here or not?
     module Process
-      def process!(file, metadata={})
+      def process!(file, new_uid=nil, metadata={})
         job = Dragonfly.app.new_job(file)
 
         yield job if block_given?
 
+        old_uid = uid
+        uid!(new_uid) if new_uid # new UID is already computed and set.
+
         puts "........................STORE  (process): #{uid}"
         job.store(path: uid, :headers => {'x-amz-acl' => 'public-read', "Content-Type" => "image/jpeg"})
+
+        if new_uid
+          puts "........................DELETE (reprocess): #{old_uid}"
+        Dragonfly.app.destroy(old_uid)
+        end
 
         @data = nil
         metadata_for(job, metadata)
