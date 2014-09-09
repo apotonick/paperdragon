@@ -53,7 +53,8 @@ module Paperdragon
 
     # Returns new UID for new file when overriding an existing attachment with #process!.
     def new_uid_for(style, version)
-      @attachment.exists? ? @attachment.uid_from(style, upload) : nil # DISCUSS: move to Attachment?
+      # check if UID is present in existing metadata.
+      @attachment.metadata[style][:uid] ? @attachment.uid_from(style, upload) : nil # DISCUSS: move to Attachment?
     end
   end
 end

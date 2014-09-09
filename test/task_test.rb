@@ -62,6 +62,14 @@ class TaskSpec < MiniTest::Spec
         Attachment.new(nil).task.process!(:original)
       end
     end
+
+    it do
+      # after uploading "new", only delete when uid was in metadata.
+      existing_metadata = {processing: true}
+      metadata = Attachment.new(existing_metadata).task(logo).process!(:thumb)
+      metadata.must_equal({:processing=>true, :thumb=>{:width=>216, :height=>63, :uid=>"thumb-apotomo.png"}})
+      exists?("thumb-apotomo.png").must_equal true
+    end
   end
 
 
