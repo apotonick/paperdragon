@@ -18,7 +18,10 @@ class PaperdragonModelTest < MiniTest::Spec
     end
   end
 
+  # model has image_meta_data hash.
   it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/Avatar-thumb" }
+  # model doesn't have upload, yet. returns empty attachment.
+  it { Image.new.image.metadata.must_equal({}) }
 
 
   # minimum setup
