@@ -56,7 +56,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
     # additional metadata
     it do
-      file.process!(logo, :cropping => "16x16") do |job|
+      file.process!(logo, nil, :cropping => "16x16") do |job|
         job.thumb!("16x16")
       end.must_equal({:width=>16, :height=>5, :uid=>uid, :cropping=>"16x16"})
     end

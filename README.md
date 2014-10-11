@@ -174,6 +174,29 @@ end
 This will also remove the associated metadata from the model.
 
 
+## Replacing Images
+
+It's ok to run `#process!` again on a model with an existing attachment.
+
+```ruby
+user.image_meta_data  #=> {original: {uid: "original-logo-1234567890.jpg", ..},
+```
+
+Processing here will overwrite the existing attachment.
+
+```ruby
+user.image(new_file) do |v|
+  v.process!(:original) # overwrites the existing, deletes old.
+end
+```
+
+```ruby
+user.image_meta_data  #=> {original: {uid: "original-new-file01.jpg", ..},
+```
+
+While replacing the old with the new upload, the old file also gets deleted.
+
+
 ## Fingerprints
 
 Paperdragon comes with a very simple built-in file naming.
@@ -223,7 +246,7 @@ class Attachment < Paperdragon::Attachment
   # def build_uid and the other code from above..
 
   def rebuild_uid(file, fingerprint)
-    file.uid.sub("logo.png", "logo-#{fingerprint".png)
+    file.uid.sub("logo.png", "logo-#{fingerprint}.png")
   end
 end
 ```
