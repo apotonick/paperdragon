@@ -319,6 +319,43 @@ Documentation how to use Sidekiq and paperdragon in Traiblazer will be added sho
 
 ## Validations
 
+Validating uploads are discussed in the _Callbacks_ chapter of the [Trailblazer
+book](https://leanpub.com/trailblazer). We use [file_validators](https://github.com/musaffa/file_validations).
+
+## Model: Reader and Writer
+
+If you don't like `Paperdragon::Model#image`'s fuzzy API you can use `Reader` and `Writer`.
+
+The `Writer` will usually be mixed into a form.
+
+```ruby
+class AlbumForm < Reform::Form
+  extend Paperdragon::Model::Writer
+  processable_writer :image
+```
+
+This provides the `image!` writer for processing a file.
+
+```ruby
+form.image!(file) { |v| v.thumb!("64x64") }
+```
+
+Likewise, `Reader` will usually be used in cells or decorators.
+
+```ruby
+class AlbumCell < Cell::ViewModel
+  extend Paperdragon::Model::Reader
+  processable_reader :image
+  property :image_meta_data
+```
+
+You can now access the `Attachment` via `image`.
+
+```ruby
+cell.image[:thumb].url
+```
+
+
 ## Paperclip compatibility
 
 I wrote paperdragon as an explicit alternative to paperclip. In the process of doing so, I step-wise replaced upload code, but left the rendering code unchanged. Paperclip has a slightly different API for rendering.
