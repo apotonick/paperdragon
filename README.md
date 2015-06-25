@@ -320,7 +320,7 @@ Documentation how to use Sidekiq and paperdragon in Traiblazer will be added sho
 ## Validations
 
 Validating uploads are discussed in the _Callbacks_ chapter of the [Trailblazer
-book](https://leanpub.com/trailblazer). We use [file_validators](https://github.com/musaffa/file_validations).
+book](https://leanpub.com/trailblazer). We use [file_validators](https://github.com/musaffa/file_validators).
 
 ## Model: Reader and Writer
 
