@@ -1,5 +1,15 @@
 module Paperdragon
   # A physical file with a UID.
+  #
+  # Files are usually created via an Attachment instance. You can call processing
+  # methods on file instances. This will save the file and return the new metadata
+  # hash.
+  #
+  #   file = Paperdragon::File.new(uid)
+  #
+  #   metadata = file.reprocess! do |job|
+  #     job.thumb!("16x16")
+  #   end
   class File
     def initialize(uid, options={})
       @uid     = uid
