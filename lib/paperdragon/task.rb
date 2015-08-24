@@ -42,6 +42,14 @@ module Paperdragon
       @metadata.merge!(style => version.rename!(new_uid, &block))
     end
 
+    def delete!(style)
+      version = file(style)
+      version.delete!
+
+      @metadata.delete(style)
+      @metadata
+    end
+
   private
     def file(style, upload=nil)
       @attachment[style, upload]

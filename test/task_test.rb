@@ -162,4 +162,26 @@ class TaskSpec < MiniTest::Spec
       }.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo-new.png"}})
     end
   end
+
+
+  describe "#delete!" do
+    before do
+      attachment = Paperdragon::Attachment.new(nil)
+      @upload_task = attachment.task(logo)
+      metadata = @upload_task.process!(:original).must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}})
+
+      # we do not update the attachment from task.
+      attachment = Paperdragon::Attachment.new(@upload_task.metadata)
+      exists?(attachment[:original].uid).must_equal true
+    end
+
+    let (:metadata) { @upload_task.metadata }
+
+    it do
+      attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :size=>9632}}
+      task = attachment.task
+      task.delete!(:original).must_equal({})
+      exists?(attachment[:original].uid).must_equal false
+    end
+  end
 end
