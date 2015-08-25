@@ -1,3 +1,7 @@
+# 0.0.9
+
+* Add `Task#delete!` which allows to delete files in task blocks.
+
 # 0.0.8
 
 * Introduce `Model::Writer` and `Model::Reader` in case you don't like `Model#image`'s fuzzy API.
