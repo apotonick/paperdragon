@@ -177,11 +177,29 @@ class TaskSpec < MiniTest::Spec
 
     let (:metadata) { @upload_task.metadata }
 
+    # #delete!(:original)
     it do
       attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :size=>9632}}
-      task = attachment.task
-      task.delete!(:original).must_equal({})
+
+      attachment.task.delete!(:original).must_equal({})
+
       exists?(attachment[:original].uid).must_equal false
+    end
+
+    # #delete no args.
+    it do
+      metadata = @upload_task.process!(:thumb)
+      metadata.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>216, :height=>63, :uid=>"thumb-apotomo.png"}})
+
+      attachment = Paperdragon::Attachment.new(metadata) # {:original=>{:width=>216, :height=>63, :uid=>"uid/original", :size=>9632}}
+      # thumb and original are both there.
+      exists?(attachment[:original].uid).must_equal true
+      exists?(attachment[:thumb].uid).must_equal true
+
+      attachment.task.delete!.must_equal({})
+
+      exists?(attachment[:original].uid).must_equal false
+      exists?(attachment[:thumb].uid).must_equal false
     end
   end
 end

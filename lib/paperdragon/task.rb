@@ -1,5 +1,8 @@
 module Paperdragon
   # Gives a simple API for processing multiple versions of a single attachment.
+  #
+  # Each processing method will return the updated metadata hash. You still have
+  # to save that hash back to the model.
   class Task
     def initialize(attachment, upload=nil)
       @attachment = attachment
@@ -42,11 +45,14 @@ module Paperdragon
       @metadata.merge!(style => version.rename!(new_uid, &block))
     end
 
-    def delete!(style)
-      version = file(style)
-      version.delete!
+    def delete!(*styles)
+      styles = @attachment.metadata.keys if styles.size == 0
 
-      @metadata.delete(style)
+      styles.each do |style|
+        file(style).delete!
+        @metadata.delete(style)
+      end
+
       @metadata
     end
 

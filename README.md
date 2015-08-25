@@ -173,6 +173,14 @@ end
 
 This will also remove the associated metadata from the model.
 
+You can delete all versions of an attachment by omitting the style.
+
+```ruby
+user.image do |v|
+  v.delete! # deletes :original and :thumb.
+end
+```
+
 
 ## Replacing Images
 

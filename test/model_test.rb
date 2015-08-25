@@ -52,6 +52,12 @@ class PaperdragonModelTest < MiniTest::Spec
 
     model.image_meta_data.class.must_equal Hash
     model.image_meta_data.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}, :thumb=>{:width=>8, :height=>2, :uid=>"thumb-apotomo-1.png"}})
+
+    model.image do |v|
+      v.delete!(:thumb)
+    end
+
+    model.image_meta_data.must_equal({:original=>{:width=>216, :height=>63, :uid=>"original-apotomo.png"}})
   end
 
   # passing options from image(file, {..}) to the Attachment.
