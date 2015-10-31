@@ -64,7 +64,7 @@ module Paperdragon
 
       def build_uid(style, file)
         # can we use Dragonfly's API here?
-        "#{style}-#{Dragonfly::TempObject.new(file).original_filename}"
+        "#{style}-#{Dragonfly::TempObject.new(file).name}"
       end
     end
 

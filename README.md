@@ -217,7 +217,7 @@ class User < ActiveRecord::Base
 
   class Attachment < Paperdragon::Attachment
     def build_uid(style, file)
-      "/path/to/#{style}/#{obfuscator}/#{file.original_filename}"
+      "/path/to/#{style}/#{obfuscator}/#{file.name}"
     end
 
     def obfuscator
