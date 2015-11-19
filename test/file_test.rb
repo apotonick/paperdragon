@@ -51,7 +51,7 @@ class PaperdragonFileTest < MiniTest::Spec
         job.thumb!("16x16")
       end
 
-      assert file.data.size <= logo.size # smaller after thumb!
+      assert file.data.size < 500 # smaller after thumb!
     end
 
     # additional metadata
@@ -106,7 +106,7 @@ class PaperdragonFileTest < MiniTest::Spec
 
       end
 
-      assert file.data.size <= original.data.size
+      assert file.data.size < 500
     end
   end
 
