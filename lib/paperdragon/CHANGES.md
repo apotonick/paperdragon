@@ -1,3 +1,7 @@
+# 0.0.10
+
+* Require Dragonfly 1.0.12 or above and change internal API accordingly. Thanks @acaron for fixing that!
+
 # 0.0.9
 
 * Add `Task#delete!` which allows to delete files in task blocks.
