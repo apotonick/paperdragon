@@ -6,7 +6,7 @@ class PaperclipUidTest < MiniTest::Spec
   Uid = Paperdragon::Paperclip::Uid
 
   let (:options) { {:class_name => :avatars, :attachment => :image, :id => 1234,
-    :style => :original, :updated_at => Time.parse("20-06-2014 9:40:59").to_i,
+    :style => :original, :updated_at => Time.parse("20-06-2014 9:40:59 +1000").to_i,
     :file_name => "kristylee.jpg", :hash_secret => "secret"} }
 
   it { Uid.from(options).
