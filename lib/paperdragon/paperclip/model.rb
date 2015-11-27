@@ -13,7 +13,7 @@ module Paperdragon
           # `image(:thumb).url`.
           mod = Module.new do # TODO: merge with attachment_accessor_for.
             define_method name do # e.g. Avatar#image
-              Proxy.new(self, attachment_class)  # provide paperclip DSL.
+              Proxy.new(name, self, attachment_class)  # provide paperclip DSL.
             end
           end
           include mod
@@ -23,8 +23,8 @@ module Paperdragon
 
       # Needed to expose Paperclip's DSL, like avatar.image.url(:thumb).
       class Proxy
-        def initialize(model, attachment_class)
-          @attachment = attachment_class.new(model.image_meta_data, {:model => model})
+        def initialize(name, model, attachment_class)
+          @attachment = attachment_class.new(model.public_send("#{name}_meta_data"), {:model => model})
         end
 
         def url(style)

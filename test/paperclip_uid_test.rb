@@ -37,21 +37,47 @@ class PaperclipModelTest < MiniTest::Spec
       end
     end
 
+    class PictureAttachment < Paperdragon::Attachment
+      self.file_class = Photo
+
+      def exists?
+        "Of course it's a Picture!"
+      end
+    end
+
     include Paperdragon::Paperclip::Model
     processable :image, Attachment
+    processable :picture, PictureAttachment
 
 
     def image_meta_data
       {:thumb => {:uid => "Avatar-thumb"}}
     end
+
+    def picture_meta_data
+      {:thumb => {:uid => "Picture-thumb"}}
+    end
   end
 
-  # old paperclip style
-  it { Avatar.new.image.url(:thumb).must_equal "/paperdragon/Avatar-thumb" }
+  describe "image" do
+    # old paperclip style
+    it { Avatar.new.image.url(:thumb).must_equal "/paperdragon/Avatar-thumb" }
 
-  # paperdragon style
-  it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/Avatar-thumb" }
+    # paperdragon style
+    it { Avatar.new.image[:thumb].url.must_equal "/paperdragon/Avatar-thumb" }
 
-  # delegates all unknown methods back to Attachment.
-  it { Avatar.new.image.exists?.must_equal "Of course!" }
+    # delegates all unknown methods back to Attachment.
+    it { Avatar.new.image.exists?.must_equal "Of course!" }
+  end
+
+  describe "picture" do
+    # old paperclip style
+    it { Avatar.new.picture.url(:thumb).must_equal "/paperdragon/Picture-thumb" }
+
+    # paperdragon style
+    it { Avatar.new.picture[:thumb].url.must_equal "/paperdragon/Picture-thumb" }
+
+    # delegates all unknown methods back to Attachment.
+    it { Avatar.new.picture.exists?.must_equal "Of course it's a Picture!" }
+  end
 end
