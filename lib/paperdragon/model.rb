@@ -15,12 +15,13 @@ module Paperdragon
       def attachment_accessor_for(name, attachment_class)
         mod = Module.new do # TODO: abstract that into Uber, we use it everywhere.
           define_method name do |file=nil, options={}, &block|
-            attachment = attachment_class.new(image_meta_data, options.merge(model: self))
+            attachment = attachment_class.new(public_send("#{name}_meta_data"),
+                                              options.merge(model: self))
 
             return attachment unless file or block
 
             # run the task block and save the returned new metadata in the model.
-            self.image_meta_data = attachment.task(*[file], &block)
+            self.public_send("#{name}_meta_data=", attachment.task(*[file], &block))
           end
         end
       end
@@ -36,10 +37,11 @@ module Paperdragon
       def processable_writer(name, attachment_class=Attachment)
         mod = Module.new do # TODO: abstract that into Uber, we use it everywhere.
           define_method "#{name}!" do |file=nil, options={}, &block|
-            attachment = attachment_class.new(image_meta_data, options.merge(model: self))
+            attachment = attachment_class.new(public_send("#{name}_meta_data"),
+                                              options.merge(model: self))
 
             # run the task block and save the returned new metadata in the model.
-            self.image_meta_data = attachment.task(*[file], &block)
+            self.public_send("#{name}_meta_data=", attachment.task(*[file], &block))
           end
         end
         include mod
@@ -55,7 +57,7 @@ module Paperdragon
     module Reader
       def processable_reader(name, attachment_class=Attachment)
         define_method name do
-          attachment_class.new(image_meta_data, model: self)
+          attachment_class.new(public_send("#{name}_meta_data"), model: self)
         end
       end
     end
