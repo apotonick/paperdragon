@@ -46,7 +46,7 @@ Calling `::processable` advises paperdragon to create a `User#image` reader to t
 
 ## Uploading
 
-Processing and storing an uploaded image is an explicit step - you have to code it! This code usually goes to a separate class or an [Operation in Trailblazer](https://github.com/apotonick/trailblazer#domain-layer-operation), don't leave it in the controller if you don't have to.
+Processing and storing an uploaded image is an explicit step - you have to code it! This code usually goes to a separate class or an [Operation in Trailblazer](https://github.com/apotonick/trailblazer#operation), don't leave it in the controller if you don't have to.
 
 ```ruby
 def create
